@@ -14,6 +14,7 @@ const SettingsContainer = styled.div`
     font-weight: bold; 
     color: white;
     border-radius: 5px;
+    outline: none;
   }
 `;
 
@@ -64,6 +65,29 @@ class Settings extends Component {
                     <button onClick={() => this.handleHideModal()}>X</button>
                   </div>
                   <hr/>
+                  <div className="modal-content">
+                    <div>
+                      Pomodoro
+                    </div>
+                    <div>
+                      Language
+                      <div>
+                        <input type="radio" id="en" name="language" value="en"  />
+                        <label for="en">EN</label>
+                      </div>
+                      <div>
+                        <input type="radio" id="ru" name="language" value="ru" />
+                        <label for="sru">RU</label>
+                      </div>
+                      <div>
+                        <input type="radio" id="uk" name="language" value="uk" />
+                        <label for="uk">UK</label>
+                      </div>
+                    </div>  
+                    <div>
+                      Tema
+                    </div>
+                  </div>
                 </Modal>
             }
         </SettingsContainer>
