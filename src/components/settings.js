@@ -1,16 +1,40 @@
 import React, {Component} from "react";
 import styled from 'styled-components';
 
+const SettingsContainer = styled.div`
+  width: 500px;
+  margin: 0 auto;
+  text-align: right;
+  padding: 20px 10px; 
+  .btn-setting {
+    background: none;
+    border: 2px solid white;
+    padding: 5px 20px;
+    font-size: 15px;
+    font-weight: bold; 
+    color: white;
+    border-radius: 5px;
+  }
+`;
 
 const Modal = styled.div`
-  width: 500px;
-  height: 300px;
+  padding: 20px;
+  width: 350px;
+  height: 400px;
   position: fixed;
-  top: 150px;
-  left: calc(50% - 250px);
+  top: 100px;
+  left: calc(50% - 175px);
   text-align: center;
-  background-color: darksalmon;
+  background-color: white;
   z-index: 1;
+  border-radius: 20px;
+  .header-modal {
+    display: flex;
+    justify-content: space-between;
+    h3 {
+      margin: 0;
+    }
+  }
 `;
 
 class Settings extends Component {
@@ -30,17 +54,19 @@ class Settings extends Component {
     }
 
     render() {
-        console.log(this.state.visible)
       return (
-        <>
-            <button onClick={() => this.handleShowModal()}>Settings</button>
+        <SettingsContainer>
+            <button className="btn-setting" onClick={() => this.handleShowModal()}>Setting</button>
             {this.state.visible && 
                 <Modal>
+                  <div className="header-modal">
+                    <h3>Timer setting</h3>
                     <button onClick={() => this.handleHideModal()}>X</button>
-                    <h1>Settings</h1>
+                  </div>
+                  <hr/>
                 </Modal>
             }
-        </>
+        </SettingsContainer>
       );
     }
   }

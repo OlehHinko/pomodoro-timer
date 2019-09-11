@@ -17,6 +17,11 @@ const Card = styled.div`
   background-color: darksalmon;
 `;
 
+const Time = styled.div`
+  color: white;
+  font-size: 100px;
+  font-weight: bold;
+`;
 
 class Timer extends Component {
     constructor(props) {
@@ -61,13 +66,14 @@ class Timer extends Component {
     render() {
       return (
         <Card>
-            <Title>
-                Пройшло секунд: {Math.floor(this.state.seconds / 60) + ': ' + this.state.seconds % 60}
-            </Title>
-            <button onClick={() => this.handleTimerStart()}>start</button>
-            {this.state.timerStart && <button onClick={() => this.handleTimerPause()}>pause</button>}
+            <Title>Pomodoro</Title>
+            <Time>
+                {Math.floor(this.state.seconds / 60) + ': ' + this.state.seconds % 60}
+            </Time>
+            { !this.state.timerStart && <button onClick={() => this.handleTimerStart()}>start</button> }
+            { this.state.timerStart && <button onClick={() => this.handleTimerPause()}>pause</button> }
             <button onClick={() => this.handleTimerReset()}>reset</button>
-            {this.state.timerStart && <button onClick={() => this.handleTimerSkip()}>skip</button>}
+            { this.state.timerStart && <button onClick={() => this.handleTimerSkip()}>skip</button> }
         </Card>
       );
     }
