@@ -16,6 +16,7 @@ const SettingsContainer = styled.div`
     border-radius: 5px;
     outline: none;
   }
+
 `;
 
 const Modal = styled.div`
@@ -29,6 +30,11 @@ const Modal = styled.div`
   background-color: white;
   z-index: 1;
   border-radius: 20px;
+  h4 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+  }
   .header-modal {
     display: flex;
     justify-content: space-between;
@@ -36,6 +42,63 @@ const Modal = styled.div`
       margin: 0;
     }
   }
+  .settings-timer, .setting-language, .settings-theme {
+    margin: 20px 0;
+  }
+  .settings-timer{
+    display: flex;
+    justify-content: space-between;
+    > * {
+      width: 30%;
+      label {
+        font-size: 17px;
+        font-weight: 700;
+      }
+      input {
+        width: 70%;
+        padding: 5px 10px;
+        font-size: 17px;
+        background-color: gray;
+      }
+    }
+  }
+  .setting-language {
+    display: flex;
+    justify-content: space-between;
+    > * {
+      width: 25%;
+      label {
+        font-size: 15px;
+        font-weight: 700;
+        padding-left: 10px;
+      }
+      input {
+        width: 100%;
+      }
+    }
+    h4 {
+      line-height: 44px;
+    }
+  }
+  .settings-theme {
+    display: flex;
+    > * {
+      width: 50%;
+    }
+    h4 {
+      text-align: left;
+      line-height: 24px;
+    }
+    span {
+      font-size: 15px;
+      font-weight: 700;
+      padding-left: 10px;
+    }
+    input {
+      margin: 5px 10px 0;
+    }
+  }
+
 `;
 
 class Settings extends Component {
@@ -66,28 +129,46 @@ class Settings extends Component {
                   </div>
                   <hr/>
                   <div className="modal-content">
-                    <div>
-                      Pomodoro
+                    <div className="settings-timer">
+                      <div>
+                        <label>Pomodoro</label>
+                        <input type="number" min="0" step="1" value="4" />
+                      </div>
+                      <div>
+                        <label>Short Break</label>
+                        <input type="number" min="0" step="1" value="4" />
+                      </div>
+                      <div>
+                        <label>Long Break</label>
+                        <input type="number" min="0" step="1" value="4" />
+                      </div>
                     </div>
-                    <div>
-                      Language
+                    <hr/>
+                    <div className="setting-language">
+                      <h4>Language</h4>
                       <div>
-                        <input type="radio" id="en" name="language" value="en"  />
                         <label for="en">EN</label>
+                        <input type="radio" id="en" name="language" />
                       </div>
                       <div>
-                        <input type="radio" id="ru" name="language" value="ru" />
-                        <label for="sru">RU</label>
+                        <label for="ru">RU</label>
+                        <input type="radio" id="ru" name="language" />
                       </div>
                       <div>
-                        <input type="radio" id="uk" name="language" value="uk" />
                         <label for="uk">UK</label>
+                        <input type="radio" id="uk" name="language"/>
                       </div>
-                    </div>  
-                    <div>
-                      Tema
+                    </div> 
+                    <hr/> 
+                    <div className="settings-theme">
+                      <h4>Theme</h4>  
+                      <div>
+                        <span>Dark</span>
+                        <input type="radio" id="themeDark" name="theme" />
+                      </div>
                     </div>
                   </div>
+                  <hr/> 
                 </Modal>
             }
         </SettingsContainer>
