@@ -2,6 +2,26 @@ import React, {Component} from "react";
 import styled from 'styled-components';
 import { connect } from "react-redux";
 import Actions from "../redux/actions";
+import i18n from "i18next";
+import { useTranslation, initReactI18next } from "react-i18next";
+
+i18n
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources: {
+      uk: {
+        translation: {
+          "Setting": "Налаштування"
+        }
+      }
+    },
+    lng: "uk",
+    fallbackLng: "uk",
+
+    interpolation: {
+      escapeValue: false
+    }
+  });
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -35,6 +55,8 @@ class Timer extends Component {
         counterSkip: 0,
        };
     }
+
+    
   
     /*tick() {
       this.setState(state => ({
@@ -92,9 +114,11 @@ class Timer extends Component {
     render() {
       console.log(this.state);
       const { seconds } = this.props;
+      const { t } = useTranslation();
+
       return (
         <Card>
-            <Title>Pomodoro</Title>
+            <Title>{t('Setting')}</Title>
             <Time>
                 {Math.floor(seconds / 60) + ': ' + seconds % 60}
             </Time>
