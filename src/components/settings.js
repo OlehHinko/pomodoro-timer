@@ -132,15 +132,15 @@ class Settings extends Component {
                     <div className="settings-timer">
                       <div>
                         <label>Pomodoro</label>
-                        <input type="number" min="0" step="1" value="4" />
+                        <input type="number" min="0" step="1" value="25" />
                       </div>
                       <div>
                         <label>Short Break</label>
-                        <input type="number" min="0" step="1" value="4" />
+                        <input type="number" min="0" step="1" value="5" />
                       </div>
                       <div>
                         <label>Long Break</label>
-                        <input type="number" min="0" step="1" value="4" />
+                        <input type="number" min="0" step="1" value="20" />
                       </div>
                     </div>
                     <hr/>
