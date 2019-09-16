@@ -1,7 +1,7 @@
-import { setDefaultSetting } from "./timer-reduser";
+import { setDefaultSetting, setSeconds, setCounterSkip, resetTimer } from "./timer-reduser";
 import { tick } from "./timer-reduser";
 
 export default {
-    timer: { setDefaultSetting },
+    timer: { setDefaultSetting, setSeconds, setCounterSkip, resetTimer },
     tick: { tick }
 }
