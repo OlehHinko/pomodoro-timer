@@ -5,9 +5,8 @@ export const SET_TIMER_COUNTER_SKIP = "SET_TIMER_COUNTER_SKIP";
 export const RESET_TIMER = "RESET_TIMER";
 
 const initState = {
-	language: "en",
 	theme: "pomodoro",
-	duration: "pomodoro",
+	title: "pomodoro",
 	counterSkip: 0,
 	seconds: 1500,
 };

@@ -38,16 +38,6 @@ const Card = styled.div`
   text-align: center;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
-  button {
-    background: none;
-    border: 2px solid white;
-    padding: 5px 20px;
-    font-size: 15px;
-    font-weight: bold; 
-    color: white;
-    border-radius: 5px;
-    outline: none;
-  }
 `;
 
 const Time = styled.div`
@@ -119,11 +109,11 @@ class Timer extends Component {
     }
 
     render() {
-      const { seconds } = this.props;
+      const { seconds, title } = this.props;
 
       return (
         <Card>
-            <Title>Pomodoro</Title>
+            <Title>{title}</Title>
             <Time>
                 {Math.floor(seconds / 60)  + ': ' + seconds % 60}
             </Time>

@@ -1,9 +1,22 @@
 body {
   margin: 0;
   font-family: 'Gayathri', sans-serif;
+  height: 100vh;
+  overflow: scroll;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+button {
+  background: none;
+    border: 2px solid white;
+    padding: 5px 20px;
+    font-size: 15px;
+    font-weight: bold; 
+    color: white;
+    border-radius: 5px;
+    outline: none;
 }
