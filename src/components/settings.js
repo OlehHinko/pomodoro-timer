@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import styled from 'styled-components';
 import { connect } from "react-redux";
 import Actions from "../redux/actions";
+import ReactDOM from 'react-dom';
 
 const SettingsContainer = styled.div`
   width: 500px;
@@ -11,7 +12,7 @@ const SettingsContainer = styled.div`
 `;
 
 const Modal = styled.div`
-  padding: 20px;
+  padding: 10px;
   width: 350px;
   height: 350px;
   position: fixed;
@@ -30,12 +31,14 @@ const Modal = styled.div`
     display: flex;
     justify-content: space-between;
     background-color: gray;
+    padding: 10px;
     h3 {
       margin: 0;
+      line-height: 31px;
     }
   }
   .settings-timer, .setting-language, .settings-theme {
-    margin: 20px 0;
+    margin: 15px 0;
   }
   .settings-timer{
     display: flex;
@@ -101,9 +104,28 @@ const Modal = styled.div`
 `;
 
 class Settings extends Component {
-    state = { 
-      visible: false
+  constructor(props) {
+    super(props);
+    this.state = { 
+      visible: false,
     };
+    this.handleClickOutside = this.handleClickOutside.bind(this);
+  }
+    componentWillUnmount() {
+      document.removeEventListener('click', this.handleClickOutside, false);
+    }
+    
+    componentWillMount() {
+      document.addEventListener('click', this.handleClickOutside, false);
+    }
+
+    handleClickOutside(event) {
+      const domNode = ReactDOM.findDOMNode(this);
+  
+      if ((!domNode || !domNode.contains(event.target))) {
+          this.setState({visible : false});
+      }
+  }
 
     handleShowModal = () => {
         this.setState({ visible: true })
@@ -184,8 +206,8 @@ class Settings extends Component {
     },
     {
       setPomodoroDurations: Actions.timerSetting.setPomodoroDurations,
-      setShortBreackDurations: Actions.timerSetting.setShortBreackDurations,
-      setLongBrackDurations: Actions.timerSetting.setLongBrackDurations,
+      setShortBreakDurations: Actions.timerSetting.setShortBreakDurations,
+      setLongBreakDurations: Actions.timerSetting.setLongBreakDurations,
       setTimerLanguage: Actions.timerSetting.setTimerLanguage,
     }
   )(Settings);

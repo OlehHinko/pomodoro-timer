@@ -4,9 +4,9 @@ export const SET_DURATIONS_LONG_BREAK = "SET_DURATIONS_LONG_BREAK";
 export const SET_TIMER_LANGUAGE = "SET_TIMER_LANGUAGE";
 
 const initState = {
-	pomodoroDurations: null,
-	shortBreakDurations: null,
-	longBreakDurations: null,
+	pomodoroDurations: 1500,
+	shortBreakDurations: 300,
+	longBreakDurations: 1200,
 	language: "en",
 	theme: "pomodoro",
 	
@@ -32,11 +32,11 @@ export const setPomodoroDurations = (seconds) => async dispatch => {
 	dispatch({ type: SET_DURATIONS_POMODORO, payload: seconds });
 };
 
-export const setShortBreackDurations = (seconds) => async dispatch => {
+export const setShortBreakDurations = (seconds) => async dispatch => {
 	dispatch({ type: SET_DURATION_SHORT_BREAK, payload: seconds });
 };
 
-export const setLongBrackDurations = (seconds) => async dispatch => {
+export const setLongBreakDurations = (seconds) => async dispatch => {
 	dispatch({ type: SET_DURATIONS_LONG_BREAK, payload: seconds });
 };
 

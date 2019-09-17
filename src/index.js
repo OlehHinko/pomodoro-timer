@@ -7,12 +7,12 @@ import { history, getStore } from "./store";
 import {BrowserRouter} from "react-router-dom"
 import { Provider } from "react-redux";
 
-ReactDOM.render(
+ReactDOM.render((
     <Provider store={getStore()}>
         <BrowserRouter history={history}>
             <App  />
         </BrowserRouter>
-    </Provider>, document.getElementById('root'));
+</Provider>), document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

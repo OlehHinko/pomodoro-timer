@@ -5,7 +5,7 @@ import Actions from "../redux/actions";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
 
-/*i18n
+i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources: {
@@ -21,7 +21,7 @@ import { useTranslation, initReactI18next } from "react-i18next";
     interpolation: {
       escapeValue: false
     }
-  });*/
+  });
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -97,23 +97,34 @@ class Timer extends Component {
     }
 
     handleCheckCounterSkip = () => {
-      const {counterSkip, setSeconds} = this.props;
+      const {
+        counterSkip, 
+        setSeconds, 
+        pomodoroDurations, 
+        longBreakDurations, 
+        shortBreakDurations,
+        setTimerTitle,
+      } = this.props;
 
       if ( counterSkip === 8 ) {
-        setSeconds(1200);
+        setSeconds(longBreakDurations);
+        setTimerTitle("long beak")
       } else if (counterSkip % 2 === 0 ) {
-        setSeconds(300);
+        setSeconds(shortBreakDurations);
+        setTimerTitle("short beak");
       } else {
-        setSeconds(1500);
+        setSeconds(pomodoroDurations);
+        setTimerTitle("pomodoro")
       }
     }
 
     render() {
       const { seconds, title } = this.props;
+      const { t } = useTranslation();
 
       return (
         <Card>
-            <Title>{title}</Title>
+            <Title>{t(title)}</Title>
             <Time>
                 {Math.floor(seconds / 60)  + ': ' + seconds % 60}
             </Time>
@@ -132,6 +143,9 @@ class Timer extends Component {
         seconds: state.timer.seconds,
         title: state.timer.title,
         counterSkip: state.timer.counterSkip,
+        pomodoroDurations: state.timerSetting.pomodoroDurations,
+        shortBreakDurations: state.timerSetting.shortBreakDurations,
+        longBreakDurations: state.timerSetting.longBreakDurations,
       };
     },
     {
@@ -140,5 +154,6 @@ class Timer extends Component {
       setSeconds: Actions.timer.setSeconds,
       setCounterSkip: Actions.timer.setCounterSkip,
       resetTimer: Actions.timer.resetTimer,
+      setTimerTitle: Actions.timer.setTimerTitle,
     }
   )(Timer);
