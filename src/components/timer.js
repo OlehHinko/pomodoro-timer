@@ -4,24 +4,10 @@ import { connect } from "react-redux";
 import Actions from "../redux/actions";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
+import { withTranslation } from 'react-i18next';
+import { conditionalExpression } from "@babel/types";
 
-i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
-  .init({
-    resources: {
-      uk: {
-        translation: {
-          "Setting": "Settings"
-        }
-      }
-    },
-    lng: "uk",
-    fallbackLng: "uk",
 
-    interpolation: {
-      escapeValue: false
-    }
-  });
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -118,9 +104,11 @@ class Timer extends Component {
       }
     }
 
+    
+
     render() {
-      const { seconds, title } = this.props;
-      const { t } = useTranslation();
+      const { seconds, title, t} = this.props;
+      console.log(this.props)
 
       return (
         <Card>
@@ -156,4 +144,4 @@ class Timer extends Component {
       resetTimer: Actions.timer.resetTimer,
       setTimerTitle: Actions.timer.setTimerTitle,
     }
-  )(Timer);
+  )(withTranslation()(Timer));
