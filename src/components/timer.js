@@ -5,8 +5,7 @@ import Actions from "../redux/actions";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
 import { withTranslation } from 'react-i18next';
-import { conditionalExpression } from "@babel/types";
-
+import Indicator from "./indicator"
 
 
 const Title = styled.h1`
@@ -46,9 +45,12 @@ class Timer extends Component {
       
     }
   
-    componentWillUpdate() {
-      const { seconds, setCounterSkip } = this.props;
+    componentWillUpdate(preProps) {
+      const { seconds, setCounterSkip, title } = this.props;
+      if(seconds !== preProps.seconds) {
+        this.handleIndicatorCalculationWidth(seconds, title);
 
+      }
       if(seconds === 1) {
         clearInterval(this.interval);
         setCounterSkip();
@@ -62,9 +64,9 @@ class Timer extends Component {
     }
 
     handleTimerStart = () => {
-      const {tick } = this.props;
-        this.interval = setInterval(() => tick(), 1000);
-        this.setState({timerStart: true})
+      const {tick, title, seconds } = this.props;
+      this.interval = setInterval(() => tick(seconds, title), 1000);
+      this.setState({timerStart: true})
     }
 
     handleTimerReset = () => {
@@ -94,25 +96,38 @@ class Timer extends Component {
 
       if ( counterSkip === 8 ) {
         setSeconds(longBreakDurations);
-        setTimerTitle("long beak")
+        setTimerTitle("long break")
       } else if (counterSkip % 2 === 0 ) {
         setSeconds(shortBreakDurations);
-        setTimerTitle("short beak");
+        setTimerTitle("short break");
       } else {
         setSeconds(pomodoroDurations);
         setTimerTitle("pomodoro")
       }
     }
 
-    
+     handleIndicatorCalculationWidth = (indicatorWidth, title) => {
+      const {setTimerIndicatorWidth} = this.props;
+      let duration;
+      if(title === "pomodoro") {
+        duration = 1500;
+      } else if (title === "long break") {
+        duration = 1200;
+      } else if (title === "short break") {
+        duration = 300;
+      }
+
+      const width = (((indicatorWidth * 100)/duration) * 592) /100;
+      setTimerIndicatorWidth(width)
+    }
 
     render() {
       const { seconds, title, t} = this.props;
-      console.log(this.props)
 
       return (
         <Card>
             <Title>{t(title)}</Title>
+            <Indicator indicatorWidth={this.state.indicatorWidth}/>
             <Time>
                 {Math.floor(seconds / 60)  + ': ' + seconds % 60}
             </Time>
@@ -134,6 +149,7 @@ class Timer extends Component {
         pomodoroDurations: state.timerSetting.pomodoroDurations,
         shortBreakDurations: state.timerSetting.shortBreakDurations,
         longBreakDurations: state.timerSetting.longBreakDurations,
+        indicatorWidth: state.timer.indicatorWidth,
       };
     },
     {
@@ -143,5 +159,6 @@ class Timer extends Component {
       setCounterSkip: Actions.timer.setCounterSkip,
       resetTimer: Actions.timer.resetTimer,
       setTimerTitle: Actions.timer.setTimerTitle,
+      setTimerIndicatorWidth: Actions.timer.setTimerIndicatorWidth,
     }
   )(withTranslation()(Timer));

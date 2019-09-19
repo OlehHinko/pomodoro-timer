@@ -4,12 +4,14 @@ export const SET_TIMER_SECONDS = "SET_TIMER_SECONDS";
 export const SET_TIMER_COUNTER_SKIP = "SET_TIMER_COUNTER_SKIP";
 export const RESET_TIMER = "RESET_TIMER";
 export const SET_TIMER_TITLE = "SET_TIMER_TITLE";
+export const SET_TIMER_INDICATOR_WIDTH = "SET_TIMER_INDICATOR_WIDTH"
 
 const initState = {
 	theme: "pomodoro",
 	title: "pomodoro",
 	counterSkip: 0,
 	seconds: 1500,
+	indicatorWidth: 592,
 };
 
 export const timerReducers = (state = initState, action) => {
@@ -26,6 +28,8 @@ export const timerReducers = (state = initState, action) => {
 			return { ...state, counterSkip: 0, seconds: 1500, title: "pomodoro" };
 		case SET_TIMER_TITLE: 
 			return { ...state, title: action.payload };
+		case SET_TIMER_INDICATOR_WIDTH: 
+			return { ...state, indicatorWidth: action.payload };
 		default:
 			return state;
 	}
@@ -53,5 +57,9 @@ export const resetTimer = () => async dispatch => {
 
 export const setTimerTitle = (title) => async dispatch => {
 	dispatch({ type: SET_TIMER_TITLE, payload: title });
+}
+
+export const setTimerIndicatorWidth = (width) => async dispatch => {
+	dispatch({ type: SET_TIMER_INDICATOR_WIDTH, payload: width });
 }
 
