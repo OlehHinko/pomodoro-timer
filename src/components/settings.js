@@ -59,6 +59,7 @@ const Modal = styled.div`
         padding: 5px 10px;
         font-size: 17px;
         background-color: gray;
+        outline: none;
       }
     }
   }
@@ -115,6 +116,8 @@ class Settings extends Component {
       visible: false,
     };
     this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentWillUnmount() {
@@ -141,47 +144,74 @@ class Settings extends Component {
     this.setState({visible: false})
   }
 
-    render() {
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.setState({visible: false})
+  }
+
+  handleChange = (e) => {
+    const {
+      setPomodoroDurations,
+      setShortBreakDurations,
+      setLongBreakDurations,
+      setThemeTimer,
+    } = this.props;
+    console.log(e.target.value);
+    if(e.target.name === "pomodoro"){
+      setPomodoroDurations(e.target.value * 60);
+    } else if (e.target.name === "shortBreak"){
+      setShortBreakDurations(e.target.value * 60);
+    } else if (e.target.name === "longBreak") {
+      setLongBreakDurations(e.target.value * 60);
+    } else if (e.target.name === "theme") {
+      setThemeTimer("black");
+    }
+  }
+
+  render() {
+      const {visible} = this.state;
+      const {pomodoroDurations, longBreakDurations, shortBreakDurations } = this.props;
+
       return (
         <SettingsContainer>
             <button className="btn-setting" onClick={() => this.handleShowModal()}>Setting</button>
-            {this.state.visible &&
+            { visible &&
                 <Modal>
                   <div className="header-modal">
                     <h3>Timer setting</h3>
                     <button onClick={() => this.handleHideModal()}>X</button>
                   </div>
                   <hr/>
-                  <form>
+                  <form onSubmit={this.handleSubmit}>
                     <div className="modal-content">
                       <div className="settings-timer">
                         <div>
                           <label>Pomodoro</label>
-                          <input type="number" min="0" step="1" value="25" />
+                          <input type="number" name="pomodoro" min="0" step="1" onChange={this.handleChange} defaultValue={pomodoroDurations/60} />
                         </div>
                         <div>
                           <label>Short Break</label>
-                          <input type="number" min="0" step="1" value="5" />
+                          <input type="number" name="shortBreak" min="0" step="1" onChange={this.handleChange} defaultValue={shortBreakDurations/60} />
                         </div>
                         <div>
                           <label>Long Break</label>
-                          <input type="number" min="0" step="1" value="20" />
+                          <input type="number" name="longBreak" min="0" step="1" onChange={this.handleChange} defaultValue={longBreakDurations/60} />
                         </div>
                       </div>
                       <hr/>
                       <div className="setting-language">
                         <h4>Language</h4>
                         <div>
-                          <label for="en">EN</label>
-                          <input type="radio" id="en" name="language" />
+                          <label>EN</label>
+                          <input type="radio" id="en" name="en" />
                         </div>
                         <div>
-                          <label for="ru">RU</label>
-                          <input type="radio" id="ru" name="language" />
+                          <label>RU</label>
+                          <input type="radio" id="ru" name="ru" />
                         </div>
                         <div>
-                          <label for="uk">UK</label>
-                          <input type="radio" id="uk" name="language"/>
+                          <label>UK</label>
+                          <input type="radio" id="uk" name="uk"/>
                         </div>
                       </div> 
                       <hr/> 
@@ -189,13 +219,13 @@ class Settings extends Component {
                         <h4>Theme</h4>  
                         <div>
                           <span>Dark</span>
-                          <input type="radio" id="themeDark" name="theme" />
+                          <input type="radio" onChange={this.handleChange} id="themeDark" name="theme" />
                         </div>
                       </div>
                       <hr/> 
                     </div>
                     <div className="modal-footer">
-                      <button>OK</button>
+                      <button type="submit">OK</button>
                     </div>
                   </form>
                 </Modal>
@@ -208,6 +238,9 @@ class Settings extends Component {
   export default connect(
     state => {
       return {
+        pomodoroDurations: state.timerSetting.pomodoroDurations,
+        shortBreakDurations: state.timerSetting.shortBreakDurations,
+        longBreakDurations: state.timerSetting.longBreakDurations,
       };
     },
     {
@@ -215,5 +248,6 @@ class Settings extends Component {
       setShortBreakDurations: Actions.timerSetting.setShortBreakDurations,
       setLongBreakDurations: Actions.timerSetting.setLongBreakDurations,
       setTimerLanguage: Actions.timerSetting.setTimerLanguage,
+      setThemeTimer: Actions.timerSetting.setThemeTimer,
     }
 )(withTranslation()(Settings));

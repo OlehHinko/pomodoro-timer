@@ -2,11 +2,8 @@ import React, {Component} from "react";
 import styled from 'styled-components';
 import {connect} from "react-redux";
 import Actions from "../redux/actions";
-import i18n from "i18next";
-import {useTranslation, initReactI18next} from "react-i18next";
 import {withTranslation} from 'react-i18next';
 import Indicator from "./indicator"
-
 
 const Title = styled.h1`
   font-size: 30px;
@@ -46,24 +43,30 @@ class Timer extends Component {
     super(props);
     this.state = {
       timerStart: false,
-      theme: "red",
     };
   }
 
   componentDidMount() {
     const {setDefaultSetting} = this.props;
     setDefaultSetting();
-
   }
 
-  componentWillUpdate(preProps) {
-    const {seconds, setCounterSkip, title} = this.props;
-    if (seconds !== preProps.seconds) {
+  componentWillUpdate(prevProps) {
+    const {
+      seconds,
+      setCounterSkip,
+      title,
+      pomodoroDurations,
+      shortBreakDurations,
+      longBreakDurations,
+      setSeconds,
+     } = this.props;
+    if (seconds !== prevProps.seconds) {
       this.handleIndicatorCalculationWidth(seconds, title);
     }
 
-    if(title !== preProps.title) {
-      this.handleChangeThemeTimer(preProps.title);
+    if(title !== prevProps.title) {
+      this.handleChangeThemeTimer(prevProps.title);
     }
 
     if (seconds === 1) {
@@ -72,6 +75,20 @@ class Timer extends Component {
       this.handleCheckCounterSkip();
       this.setState({timerStart: false});
     }
+
+    if(pomodoroDurations !== prevProps.pomodoroDurations) {
+      clearInterval(this.interval);
+      this.setState({timerStart: false});
+      setSeconds(prevProps.pomodoroDurations);
+    } else if(shortBreakDurations !== prevProps.shortBreakDurations) {
+      clearInterval(this.interval);
+      this.setState({timerStart: false});
+      setSeconds(prevProps.shortBreakDurations);
+    } if(longBreakDurations !== prevProps.longBreakDurations) {
+      clearInterval(this.interval);
+      this.setState({timerStart: false});
+      setSeconds(prevProps.longBreakDurations);
+    }
   }
 
   componentWillUnmount() {
@@ -79,14 +96,16 @@ class Timer extends Component {
   }
 
   handleTimerStart = () => {
-    const {tick, title, seconds} = this.props;
-    this.interval = setInterval(() => tick(seconds, title), 1000);
-    this.setState({timerStart: true})
+    const {tick} = this.props;
+    this.interval = setInterval(() => tick(), 1000);
+    this.setState({timerStart: true});
   }
 
   handleTimerReset = () => {
     const {resetTimer} = this.props;
-    resetTimer()
+    clearInterval(this.interval);
+    this.setState({timerStart: false});
+    resetTimer();
   }
 
   handleTimerPause = () => {
@@ -121,18 +140,18 @@ class Timer extends Component {
     }
   }
 
-  handleIndicatorCalculationWidth = (indicatorWidth, title) => {
-    const {setTimerIndicatorWidth} = this.props;
+  handleIndicatorCalculationWidth = (seconds, title) => {
+    const {setTimerIndicatorWidth, pomodoroDurations, longBreakDurations, shortBreakDurations,} = this.props;
     let duration;
     if (title === "pomodoro") {
-      duration = 1500;
+      duration = pomodoroDurations;
     } else if (title === "long break") {
-      duration = 1200;
+      duration = longBreakDurations;
     } else if (title === "short break") {
-      duration = 300;
+      duration = shortBreakDurations;
     }
 
-    const width = (((indicatorWidth * 100) / duration) * 592) / 100;
+    const width = (((seconds * 100) / duration) * 592) / 100;
     setTimerIndicatorWidth(width)
   }
 
@@ -149,24 +168,23 @@ class Timer extends Component {
     }
 
     setThemeTimer(theme);
-
   }
 
   render() {
-    const {seconds, title, t} = this.props;
-
+    const {seconds, title, t, theme} = this.props;
+    const { timerStart } = this.state;
     return (
-      <Card style={{backgroundColor: this.props.theme}}>
+      <Card style={{backgroundColor: theme}}>
         <TimeContainer>
           <Title>{t(title)}</Title>
-          <Indicator indicatorWidth={this.state.indicatorWidth}/>
+          <Indicator />
           <Time>
             {Math.floor(seconds / 60) + ': ' + seconds % 60}
           </Time>
-          {!this.state.timerStart && <button onClick={() => this.handleTimerStart()}>{t('pause')}</button>}
-          {this.state.timerStart && <button onClick={() => this.handleTimerPause()}>pause</button>}
+          { !timerStart && <button onClick={() => this.handleTimerStart()}>{t('start')}</button>}
+          { timerStart && <button onClick={() => this.handleTimerPause()}>pause</button>}
           <button onClick={() => this.handleTimerReset()}>reset</button>
-          {this.state.timerStart && <button onClick={() => this.handleTimerSkip()}>skip</button>}
+          { timerStart && <button onClick={() => this.handleTimerSkip()}>skip</button>}
         </TimeContainer>
       </Card>
     );
