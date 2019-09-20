@@ -1,15 +1,20 @@
 import React, {Component} from "react";
-import styled from 'styled-components';
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import Actions from "../redux/actions";
 import ReactDOM from 'react-dom';
+import styled from 'styled-components';
+import {withTranslation} from "react-i18next";
 
 const SettingsContainer = styled.div`
   width: 500px;
   margin: 0 auto;
   text-align: right;
   padding: 20px 10px; 
-`;
+  position: fixed;
+  left: 35%;
+  width: 30%;
+  z-index: 2;
+  `;
 
 const Modal = styled.div`
   padding: 10px;
@@ -106,40 +111,41 @@ const Modal = styled.div`
 class Settings extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       visible: false,
     };
     this.handleClickOutside = this.handleClickOutside.bind(this);
   }
-    componentWillUnmount() {
-      document.removeEventListener('click', this.handleClickOutside, false);
-    }
-    
-    componentWillMount() {
-      document.addEventListener('click', this.handleClickOutside, false);
-    }
 
-    handleClickOutside(event) {
-      const domNode = ReactDOM.findDOMNode(this);
-  
-      if ((!domNode || !domNode.contains(event.target))) {
-          this.setState({visible : false});
-      }
+  componentWillUnmount() {
+    document.removeEventListener('click', this.handleClickOutside, false);
   }
 
-    handleShowModal = () => {
-        this.setState({ visible: true })
-    }
+  componentWillMount() {
+    document.addEventListener('click', this.handleClickOutside, false);
+  }
 
-    handleHideModal = () => {
-        this.setState({ visible: false })
+  handleClickOutside(event) {
+    const domNode = ReactDOM.findDOMNode(this);
+
+    if ((!domNode || !domNode.contains(event.target))) {
+      this.setState({visible: false});
     }
+  }
+
+  handleShowModal = () => {
+    this.setState({visible: true})
+  }
+
+  handleHideModal = () => {
+    this.setState({visible: false})
+  }
 
     render() {
       return (
         <SettingsContainer>
             <button className="btn-setting" onClick={() => this.handleShowModal()}>Setting</button>
-            {this.state.visible && 
+            {this.state.visible &&
                 <Modal>
                   <div className="header-modal">
                     <h3>Timer setting</h3>
@@ -210,4 +216,4 @@ class Settings extends Component {
       setLongBreakDurations: Actions.timerSetting.setLongBreakDurations,
       setTimerLanguage: Actions.timerSetting.setTimerLanguage,
     }
-  )(Settings);
+)(withTranslation()(Settings));
