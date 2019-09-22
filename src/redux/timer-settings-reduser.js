@@ -23,8 +23,8 @@ export const timerSettingReducers = (state = initState, action) => {
 			return { ...state, longBreakDurations: action.payload };
 		case SET_TIMER_LANGUAGE:
 			return { ...state, language: action.payload };
-    case SET_TIMER_THEME:
-      return { ...state, theme: action.payload };
+    	case SET_TIMER_THEME:
+      		return { ...state, theme: action.payload };
 		default:
 			return state;
 	}

@@ -2,7 +2,7 @@ import React from "react";
 import styled from 'styled-components';
 import { connect } from "react-redux";
 
-const TimerIndicator = styled.h1`
+const TimerIndicator = styled.div`
     width: 600px;
     margin: 0 auto;
     position: fixed;

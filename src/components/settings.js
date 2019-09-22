@@ -4,6 +4,7 @@ import Actions from "../redux/actions";
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import {withTranslation} from "react-i18next";
+import {Theme} from "../api/constants"
 
 const SettingsContainer = styled.div`
   width: 500px;
@@ -67,18 +68,16 @@ const Modal = styled.div`
     display: flex;
     justify-content: space-between;
     > * {
-      width: 25%;
-      label {
-        font-size: 15px;
-        font-weight: 700;
-        padding-left: 10px;
-      }
-      input {
+      width: 50%;
+      select {
+        outline: none;
         width: 100%;
       }
     }
     h4 {
-      line-height: 44px;
+      line-height: 30px;
+      text-align: left;
+      padding-left: 20px;
     }
   }
   .settings-theme {
@@ -89,14 +88,42 @@ const Modal = styled.div`
     h4 {
       text-align: left;
       line-height: 24px;
+      padding-left: 20px;
     }
     span {
       font-size: 15px;
       font-weight: 700;
       padding-left: 10px;
     }
-    input {
-      margin: 5px 10px 0;
+    input[type=checkbox] {
+      position: relative;
+      cursor: pointer;
+    }
+    input[type=checkbox]:before {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      top: 0;
+      left: 0;
+      border: 2px solid #555555;
+      border-radius: 3px;
+      background-color: white;
+    }
+    input[type=checkbox]:checked:after {
+      content: "";
+      display: block;
+      width: 5px;
+      height: 10px;
+      border: solid black;
+      border-width: 0 2px 2px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+      position: absolute;
+      top: 2px;
+      left: 6px;
     }
   }
   .modal-footer {
@@ -114,6 +141,7 @@ class Settings extends Component {
     super(props);
     this.state = {
       visible: false,
+      prevTheme: "",
     };
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -127,6 +155,22 @@ class Settings extends Component {
   componentWillMount() {
     document.addEventListener('click', this.handleClickOutside, false);
   }
+
+  componentWillUpdate(prevProps) {
+    const { theme, title } = this.props;
+
+    if(title !== prevProps.title && theme === "black"){
+      if(prevProps.title === "Pomodoro") {
+        this.setState({prevTheme: Theme.pomodoro})
+      } else if( prevProps.title === "Short break") {
+        this.setState({prevTheme: Theme.shoptBreak})
+      } else if( prevProps.title === "Long break") {
+        this.setState({prevTheme: Theme.longBreak})
+      }
+      
+    }
+  }
+
 
   handleClickOutside(event) {
     const domNode = ReactDOM.findDOMNode(this);
@@ -155,30 +199,43 @@ class Settings extends Component {
       setShortBreakDurations,
       setLongBreakDurations,
       setThemeTimer,
+      setTimerLanguage,
+      theme,
     } = this.props;
-    console.log(e.target.value);
+    
     if(e.target.name === "pomodoro"){
       setPomodoroDurations(e.target.value * 60);
     } else if (e.target.name === "shortBreak"){
       setShortBreakDurations(e.target.value * 60);
     } else if (e.target.name === "longBreak") {
       setLongBreakDurations(e.target.value * 60);
-    } else if (e.target.name === "theme") {
-      setThemeTimer("black");
-    }
+    } else if (e.target.checked && e.target.name === "theme") {
+      this.setState({prevTheme: theme});
+      setThemeTimer(Theme.themeDark);
+    } else if (!e.target.checked && e.target.name === "theme" ) {
+      setThemeTimer(this.state.prevTheme);
+    } else if ( e.target.name === "language" ) {
+      setTimerLanguage(e.target.value);
+    } 
   }
 
   render() {
       const {visible} = this.state;
-      const {pomodoroDurations, longBreakDurations, shortBreakDurations } = this.props;
+      const {
+        pomodoroDurations,
+        longBreakDurations,
+        shortBreakDurations,
+        theme,
+        t,
+       } = this.props;
 
       return (
         <SettingsContainer>
-            <button className="btn-setting" onClick={() => this.handleShowModal()}>Setting</button>
+            <button className="btn-setting" onClick={() => this.handleShowModal()}>{t('Setting')}</button>
             { visible &&
                 <Modal>
                   <div className="header-modal">
-                    <h3>Timer setting</h3>
+                    <h3>{t('Timer setting')}</h3>
                     <button onClick={() => this.handleHideModal()}>X</button>
                   </div>
                   <hr/>
@@ -186,40 +243,38 @@ class Settings extends Component {
                     <div className="modal-content">
                       <div className="settings-timer">
                         <div>
-                          <label>Pomodoro</label>
+                          <label>{t('Pomodoro')}</label>
                           <input type="number" name="pomodoro" min="0" step="1" onChange={this.handleChange} defaultValue={pomodoroDurations/60} />
                         </div>
                         <div>
-                          <label>Short Break</label>
+                          <label>{t('Short break')}</label>
                           <input type="number" name="shortBreak" min="0" step="1" onChange={this.handleChange} defaultValue={shortBreakDurations/60} />
                         </div>
                         <div>
-                          <label>Long Break</label>
+                          <label>{t('Long break')}</label>
                           <input type="number" name="longBreak" min="0" step="1" onChange={this.handleChange} defaultValue={longBreakDurations/60} />
                         </div>
                       </div>
                       <hr/>
                       <div className="setting-language">
-                        <h4>Language</h4>
-                        <div>
-                          <label>EN</label>
-                          <input type="radio" id="en" name="en" />
-                        </div>
-                        <div>
-                          <label>RU</label>
-                          <input type="radio" id="ru" name="ru" />
-                        </div>
-                        <div>
-                          <label>UK</label>
-                          <input type="radio" id="uk" name="uk"/>
-                        </div>
+                        <h4>{t('Language')}</h4>
+                        <select name="language" onChange={this.handleChange}>
+                          <option selected defaultValue="en">en</option>
+                          <option defaultValue="uk">uk</option>
+                          <option defaultValue="ru">ru</option>
+                        </select>
                       </div> 
                       <hr/> 
                       <div className="settings-theme">
-                        <h4>Theme</h4>  
+                        <h4>{t('Darck theme')}</h4>  
                         <div>
-                          <span>Dark</span>
-                          <input type="radio" onChange={this.handleChange} id="themeDark" name="theme" />
+                          <input 
+                            type="checkbox" 
+                            onChange={this.handleChange} 
+                            id="themeDark" 
+                            name="theme"
+                            checked={theme === "black"}
+                            />
                         </div>
                       </div>
                       <hr/> 
@@ -241,6 +296,8 @@ class Settings extends Component {
         pomodoroDurations: state.timerSetting.pomodoroDurations,
         shortBreakDurations: state.timerSetting.shortBreakDurations,
         longBreakDurations: state.timerSetting.longBreakDurations,
+        theme: state.timerSetting.theme,
+        title: state.timer.title,
       };
     },
     {

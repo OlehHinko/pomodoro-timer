@@ -8,13 +8,17 @@ i18n
     resources: {
       uk: {
         translation: {
-          "pomodoro": "Помідори",
-          "short break": "коротка перерва",
-          "long break": "довга перерва",
-          "Setting": "налаштування",
+          "Pomodoro": "Годинник",
+          "Short break": "Kоротка перерва",
+          "Long break": "Довга перерва",
+          "Setting": "Налаштування",
           "pause": "пауза",
           "reset": "скинути",
-          "start": "старт"
+          "start": "старт",
+          "skip": "пропустити",
+          "Language": "Мова",
+          "Darck theme": "Темна тема",
+          "Timer setting": "Налаштування годинника",
         }
       }
     },

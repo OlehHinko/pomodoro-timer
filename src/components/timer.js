@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import {connect} from "react-redux";
 import Actions from "../redux/actions";
 import {withTranslation} from 'react-i18next';
-import Indicator from "./indicator"
+import Indicator from "./indicator";
+import {Theme} from "../api/constants"
 
 const Title = styled.h1`
   font-size: 30px;
@@ -36,6 +37,10 @@ const Time = styled.div`
   color: white;
   font-size: 100px;
   font-weight: bold;
+  margin-top: 20px;
+`;
+
+const ButtonContainer = styled.div`
 `;
 
 class Timer extends Component {
@@ -61,6 +66,7 @@ class Timer extends Component {
       longBreakDurations,
       setSeconds,
      } = this.props;
+
     if (seconds !== prevProps.seconds) {
       this.handleIndicatorCalculationWidth(seconds, title);
     }
@@ -128,26 +134,26 @@ class Timer extends Component {
       setTimerTitle,
     } = this.props;
 
-    if (counterSkip === 8) {
+    if (counterSkip === 8 || counterSkip === 16 ) {
       setSeconds(longBreakDurations);
-      setTimerTitle("long break")
+      setTimerTitle("Long break")
     } else if (counterSkip % 2 === 0) {
       setSeconds(shortBreakDurations);
-      setTimerTitle("short break");
+      setTimerTitle("Short break");
     } else {
       setSeconds(pomodoroDurations);
-      setTimerTitle("pomodoro")
+      setTimerTitle("Pomodoro")
     }
   }
 
   handleIndicatorCalculationWidth = (seconds, title) => {
     const {setTimerIndicatorWidth, pomodoroDurations, longBreakDurations, shortBreakDurations,} = this.props;
     let duration;
-    if (title === "pomodoro") {
+    if (title === "Pomodoro") {
       duration = pomodoroDurations;
-    } else if (title === "long break") {
+    } else if (title === "Long break") {
       duration = longBreakDurations;
-    } else if (title === "short break") {
+    } else if (title === "Short break") {
       duration = shortBreakDurations;
     }
 
@@ -156,15 +162,19 @@ class Timer extends Component {
   }
 
   handleChangeThemeTimer = (title) => {
+    let {theme} = this.props;
     const {setThemeTimer} = this.props;
-    let theme;
 
-    if(title === "pomodoro") {
-      theme = "red"
-    } else if( title === "short break") {
-      theme = "purple"
-    } else if( title === "long break") {
-      theme = "green"
+    if(theme === "black") {
+      return false;
+    }
+
+    if(title === "Pomodoro") {
+      theme = Theme.pomodoro;
+    } else if( title === "Short break") {
+      theme = Theme.shoptBreak;
+    } else if( title === "Long break") {
+      theme = Theme.longBreak;
     }
 
     setThemeTimer(theme);
@@ -173,18 +183,21 @@ class Timer extends Component {
   render() {
     const {seconds, title, t, theme} = this.props;
     const { timerStart } = this.state;
+
     return (
       <Card style={{backgroundColor: theme}}>
+        <Indicator />
         <TimeContainer>
           <Title>{t(title)}</Title>
-          <Indicator />
           <Time>
             {Math.floor(seconds / 60) + ': ' + seconds % 60}
           </Time>
+          <ButtonContainer>
           { !timerStart && <button onClick={() => this.handleTimerStart()}>{t('start')}</button>}
-          { timerStart && <button onClick={() => this.handleTimerPause()}>pause</button>}
-          <button onClick={() => this.handleTimerReset()}>reset</button>
-          { timerStart && <button onClick={() => this.handleTimerSkip()}>skip</button>}
+          { timerStart && <button onClick={() => this.handleTimerPause()}>{t('pause')}</button>}
+          <button onClick={() => this.handleTimerReset()}>{t('reset')}</button>
+          { timerStart && <button onClick={() => this.handleTimerSkip()}>{t('skip')}</button>}
+          </ButtonContainer>
         </TimeContainer>
       </Card>
     );
