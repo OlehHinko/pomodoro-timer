@@ -5,25 +5,30 @@ export const SET_TIMER_LANGUAGE = "SET_TIMER_LANGUAGE";
 export const SET_TIMER_THEME = "SET_TIMER_THEME";
 
 const initState = {
-	pomodoroDurations: 1500,
-	shortBreakDurations: 300,
-	longBreakDurations: 1200,
-	language: "en",
-	theme: "red",
+	pomodoroDurations: localStorage.getItem("pomodoroDuration") || 1500,
+	shortBreakDurations: localStorage.getItem("shortBreakDurations") || 300,
+	longBreakDurations: localStorage.getItem("longBreakDurations") || 1200,
+	language: localStorage.getItem("language") || "en",
+	theme: localStorage.getItem("timerTheme") || "red",
 	
 };
 
 export const timerSettingReducers = (state = initState, action) => {
 	switch (action.type) {
 		case SET_DURATIONS_POMODORO:
+			localStorage.setItem("pomodoroDuration", action.payload);
 			return { ...state, pomodoroDurations: action.payload };
 		case SET_DURATION_SHORT_BREAK:
+			localStorage.setItem("shortBreakDurations", action.payload);
 			return { ...state, shortBreakDurations: action.payload };
 		case SET_DURATIONS_LONG_BREAK:
+			localStorage.setItem("longBreakDurations", action.payload);
 			return { ...state, longBreakDurations: action.payload };
 		case SET_TIMER_LANGUAGE:
+			localStorage.setItem("language", action.payload);
 			return { ...state, language: action.payload };
     	case SET_TIMER_THEME:
+			localStorage.setItem("timerTheme", action.payload);
       		return { ...state, theme: action.payload };
 		default:
 			return state;
