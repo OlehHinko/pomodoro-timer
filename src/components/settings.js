@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import {withTranslation} from "react-i18next";
 import {Theme} from "../api/constants"
+import {getTranslations} from "../api/translations"
 
 const SettingsContainer = styled.div`
   width: 500px;
@@ -216,6 +217,7 @@ class Settings extends Component {
       setThemeTimer(this.state.prevTheme);
     } else if ( e.target.name === "language" ) {
       setTimerLanguage(e.target.value);
+      getTranslations();
     } 
   }
 
@@ -244,22 +246,39 @@ class Settings extends Component {
                       <div className="settings-timer">
                         <div>
                           <label>{t('Pomodoro')}</label>
-                          <input type="number" name="pomodoro" min="0" step="1" onChange={this.handleChange} defaultValue={pomodoroDurations/60} />
+                          <input 
+                            type="number" 
+                            name="pomodoro"
+                            min="0" step="1" 
+                            onChange={this.handleChange} 
+                            defaultValue={pomodoroDurations/60} />
                         </div>
                         <div>
                           <label>{t('Short break')}</label>
-                          <input type="number" name="shortBreak" min="0" step="1" onChange={this.handleChange} defaultValue={shortBreakDurations/60} />
+                          <input 
+                            type="number" 
+                            name="shortBreak" 
+                            min="0" 
+                            step="1" 
+                            onChange={this.handleChange} 
+                            defaultValue={shortBreakDurations/60} />
                         </div>
                         <div>
                           <label>{t('Long break')}</label>
-                          <input type="number" name="longBreak" min="0" step="1" onChange={this.handleChange} defaultValue={longBreakDurations/60} />
+                          <input 
+                            type="number" 
+                            name="longBreak" 
+                            min="0" 
+                            step="1" 
+                            onChange={this.handleChange} 
+                            defaultValue={longBreakDurations/60} />
                         </div>
                       </div>
                       <hr/>
                       <div className="setting-language">
                         <h4>{t('Language')}</h4>
                         <select name="language" onChange={this.handleChange}>
-                          <option selected defaultValue="en">en</option>
+                          <option defaultValue="en">en</option>
                           <option defaultValue="uk">uk</option>
                           <option defaultValue="ru">ru</option>
                         </select>
