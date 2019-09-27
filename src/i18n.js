@@ -1,7 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-i18n
+ i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources: {
@@ -38,6 +38,8 @@ i18n
             }
           });
           const myJson = await response.json()
+          localStorage.setItem('ua', myJson.ua);
+          localStorage.setItem('ru', myJson.ru);
         console.log(myJson)
     } 
         catch(e){
@@ -47,9 +49,7 @@ i18n
 
 export async function checkTranslation() {
   if(!localStorage.getItem('timerTranslation')){
-    localStorage.setItem('timerTranslation', i18n
-    .use(initReactI18next) // passes i18n down to react-i18next
-    .init({
+    localStorage.setItem('en', {
       resources: {
         en: {
           translation: {
@@ -73,6 +73,6 @@ export async function checkTranslation() {
       interpolation: {
         escapeValue: false
       }
-    }))
+    })
   }
 }

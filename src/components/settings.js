@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import {withTranslation} from "react-i18next";
 import {Theme} from "../api/constants"
-import {getTranslations} from "../api/translations"
+import {getTranslations} from "../i18n"
 
 const SettingsContainer = styled.div`
   width: 500px;

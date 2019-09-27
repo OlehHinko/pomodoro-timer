@@ -5,7 +5,7 @@ import Actions from "../redux/actions";
 import {withTranslation} from 'react-i18next';
 import Indicator from "./indicator";
 import {Theme} from "../api/constants"
-import {checkTranslation} from "../api/translations"
+import {checkTranslation, getTranslations} from "../i18n"
 
 const Title = styled.h1`
   font-size: 30px;
@@ -56,6 +56,7 @@ class Timer extends Component {
     const {setDefaultSetting} = this.props;
     setDefaultSetting();
     checkTranslation();
+    getTranslations();
   }
 
   componentWillUpdate(prevProps) {
