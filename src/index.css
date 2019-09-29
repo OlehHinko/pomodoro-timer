@@ -2,7 +2,7 @@ body {
    margin: 0;
    font-family: 'Gayathri', sans-serif;
    height: 100vh;
- }
+}
 
 button {
   background: none;
@@ -13,4 +13,11 @@ button {
   color: white;
   border-radius: 5px;
   outline: none;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+  background: rgba(0,0,0,0.5);
+  transition: all 0.3s;
 }

@@ -1,27 +1,8 @@
 import React from "react";
-import styled from 'styled-components';
 import { connect } from "react-redux";
-
-const TimerIndicator = styled.div`
-    width: 600px;
-    margin: 0 auto;
-    position: fixed;
-    top: 100px;
-    left: calc(50% - 300px);
-    .layout {
-        height: 12px;
-        border: 1px solid white;
-        .indicator {
-            margin: 2px;
-            height: 8px;
-            background-color: gray;
-        }
-    }
-`;
-
+import {TimerIndicator} from "./indicator.styled";
 
 function Indicator(props) {
-    
       return (
         <TimerIndicator>
             <div className="layout">

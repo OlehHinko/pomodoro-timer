@@ -10,7 +10,7 @@ const initState = {
 	shortBreakDurations: localStorage.getItem("shortBreakDurations") || 300,
 	longBreakDurations: localStorage.getItem("longBreakDurations") || 1200,
 	language: localStorage.getItem("language") || "en",
-	theme: localStorage.getItem("timerTheme") || "red",
+	theme: "red",
 	translation: null,
 	
 };

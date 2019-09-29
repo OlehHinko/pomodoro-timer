@@ -7,7 +7,7 @@ export const SET_TIMER_TITLE = "SET_TIMER_TITLE";
 export const SET_TIMER_INDICATOR_WIDTH = "SET_TIMER_INDICATOR_WIDTH"
 
 const initState = {
-	title: "Pomodoro",
+	title: "pomodoro",
 	counterSkip: 0,
 	seconds: localStorage.getItem("pomodoroDuration") || 1500,
 	indicatorWidth: 592,

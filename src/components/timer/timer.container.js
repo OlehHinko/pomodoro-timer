@@ -1,50 +1,12 @@
 import React, {Component} from "react";
-import styled from 'styled-components';
 import {connect} from "react-redux";
-import Actions from "../redux/actions";
-import {withTranslation} from 'react-i18next';
-import Indicator from "./indicator";
-import {Theme} from "../api/constants"
-import {checkTranslation, getTranslations} from "../i18n"
+import Actions from "../../redux/actions";
 
-const Title = styled.h1`
-  font-size: 30px;
-  text-align: center;
-  color: palevioletred;
-`;
+import {Theme} from "../../api/constants"
+import {checkTranslation, getTranslations} from "../translation/i18n"
+import Timer from "./timer.component";
 
-const Card = styled.div`
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  position: absolute;
-  z-index: 1;
-`;
-const TimeContainer = styled.div`
-  position: fixed;
-  top: 150px;
-  left: calc(50% - 250px);
-  width: 500px;
-  height: 300px;
-  color: white;
-  font-size: 100px;
-  font-weight: bold;
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 5px;
-`;
-
-const Time = styled.div`
-  color: white;
-  font-size: 100px;
-  font-weight: bold;
-  margin-top: 20px;
-`;
-
-const ButtonContainer = styled.div`
-`;
-
-class Timer extends Component {
+class TimerContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -52,14 +14,14 @@ class Timer extends Component {
     };
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     const {setDefaultSetting} = this.props;
     setDefaultSetting();
     checkTranslation();
     getTranslations();
   }
 
-  componentWillUpdate(prevProps) {
+  UNSAFE_componentWillUpdate(prevProps) {
     const {
       seconds,
       setCounterSkip,
@@ -85,7 +47,7 @@ class Timer extends Component {
       this.setState({timerStart: false});
     }
 
-    if(pomodoroDurations !== prevProps.pomodoroDurations) {
+   /* if(pomodoroDurations !== prevProps.pomodoroDurations) {
       clearInterval(this.interval);
       this.setState({timerStart: false});
       setSeconds(prevProps.pomodoroDurations);
@@ -97,7 +59,7 @@ class Timer extends Component {
       clearInterval(this.interval);
       this.setState({timerStart: false});
       setSeconds(prevProps.longBreakDurations);
-    }
+    }*/
   }
 
   componentWillUnmount() {
@@ -111,10 +73,12 @@ class Timer extends Component {
   }
 
   handleTimerReset = () => {
-    const {resetTimer} = this.props;
+    const {resetTimer, setPomodoroDurations} = this.props;
     clearInterval(this.interval);
     this.setState({timerStart: false});
     resetTimer();
+    localStorage.setItem('pomodoroDuration', 1500);
+    setPomodoroDurations(1500);
   }
 
   handleTimerPause = () => {
@@ -139,24 +103,24 @@ class Timer extends Component {
 
     if (counterSkip === 8 || counterSkip === 16 ) {
       setSeconds(longBreakDurations);
-      setTimerTitle("Long break")
+      setTimerTitle("long_break")
     } else if (counterSkip % 2 === 0) {
       setSeconds(shortBreakDurations);
-      setTimerTitle("Short break");
+      setTimerTitle("short_break");
     } else {
       setSeconds(pomodoroDurations);
-      setTimerTitle("Pomodoro")
+      setTimerTitle("pomodoro")
     }
   }
 
   handleIndicatorCalculationWidth = (seconds, title) => {
     const {setTimerIndicatorWidth, pomodoroDurations, longBreakDurations, shortBreakDurations,} = this.props;
     let duration;
-    if (title === "Pomodoro") {
+    if (title === "pomodoro") {
       duration = pomodoroDurations;
-    } else if (title === "Long break") {
+    } else if (title === "long_break") {
       duration = longBreakDurations;
-    } else if (title === "Short break") {
+    } else if (title === "short_break") {
       duration = shortBreakDurations;
     }
 
@@ -171,39 +135,33 @@ class Timer extends Component {
     if(theme === "black") {
       return false;
     }
-
-    if(title === "Pomodoro") {
-      theme = Theme.pomodoro;
-    } else if( title === "Short break") {
-      theme = Theme.shoptBreak;
-    } else if( title === "Long break") {
-      theme = Theme.longBreak;
+    let newTheme;
+    if(title === "pomodoro") {
+      console.log(Theme.pomodoro);
+      newTheme = Theme.pomodoro;
+    } else if( title === "short_break") {
+      newTheme = Theme.shoptBreak;
+    } else if( title === "long_break") {
+      newTheme = Theme.longBreak;
     }
 
-    setThemeTimer(theme);
+    setThemeTimer(newTheme);
   }
 
   render() {
-    const {seconds, title, t, theme} = this.props;
+    const {seconds, title, theme} = this.props;
     const { timerStart } = this.state;
 
-    return (
-      <Card style={{backgroundColor: theme}}>
-        <Indicator />
-        <TimeContainer>
-          <Title>{t(title)}</Title>
-          <Time>
-            {Math.floor(seconds / 60) + ': ' + seconds % 60}
-          </Time>
-          <ButtonContainer>
-          { !timerStart && <button onClick={() => this.handleTimerStart()}>{t('start')}</button>}
-          { timerStart && <button onClick={() => this.handleTimerPause()}>{t('pause')}</button>}
-          <button onClick={() => this.handleTimerReset()}>{t('reset')}</button>
-          { timerStart && <button onClick={() => this.handleTimerSkip()}>{t('skip')}</button>}
-          </ButtonContainer>
-        </TimeContainer>
-      </Card>
-    );
+    return <Timer 
+        seconds={seconds}
+        title={title}
+        theme={theme}
+        timerStart={timerStart}
+        handleTimerStart={this.handleTimerStart}
+        handleTimerReset={this.handleTimerReset}
+        handleTimerPause={this.handleTimerPause}
+        handleTimerSkip={this.handleTimerSkip}
+        />
   }
 }
 
@@ -229,5 +187,6 @@ export default connect(
     setTimerTitle: Actions.timer.setTimerTitle,
     setTimerIndicatorWidth: Actions.timer.setTimerIndicatorWidth,
     setThemeTimer: Actions.timerSetting.setThemeTimer,
+    setPomodoroDurations: Actions.timerSetting.setPomodoroDurations,
   }
-)(withTranslation()(Timer));
+)(TimerContainer);

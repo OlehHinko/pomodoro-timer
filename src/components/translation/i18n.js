@@ -1,5 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import common_ru from "./ru";
+import common_ua from "./ua";
 
  i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -7,19 +9,21 @@ import { initReactI18next } from "react-i18next";
     resources: {
       en: {
         translation: {
-          "Pomodoro": "Pomodoro",
-          "Short break": "Short break",
-          "Long break": "Long break",
-          "Setting": "Setting",
+          "pomodoro": "Pomodoro",
+          "short_break": "Short break",
+          "long_break": "Long break",
+          "setting": "Setting",
           "pause": "pause",
           "reset": "reset",
           "start": "start",
           "skip": "skip",
-          "Language": "Language",
-          "Dark theme": "Dark theme",
-          "Timer setting": "Timer setting",
+          "language": "Language",
+          "dark_theme": "Dark theme",
+          "timer_setting": "Timer setting",
         }
-      }
+      },
+      ua: common_ua,
+      ru: common_ru,
     },
     lng: "en",
     fallbackLng: "en",
@@ -53,17 +57,17 @@ export async function checkTranslation() {
       resources: {
         en: {
           translation: {
-            "Pomodoro": "Pomodoro",
-            "Short break": "Short break",
-            "Long break": "Long break",
-            "Setting": "Setting",
+            "pomodoro": "Pomodoro",
+            "short_break": "Short break",
+            "long_break": "Long break",
+            "setting": "Setting",
             "pause": "pause",
             "reset": "reset",
             "start": "start",
             "skip": "skip",
-            "Language": "Language",
-            "Dark theme": "Dark theme",
-            "Timer setting": "Timer setting",
+            "language": "Language",
+            "dark_theme": "Dark theme",
+            "timer_setting": "Timer setting",
           }
         }
       },

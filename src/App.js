@@ -1,15 +1,15 @@
 import React from 'react';
 import './App.css';
-import Timer from "./components/timer"
-import Settings from "./components/settings"
+import TimerContainer from "./components/timer/timer.container"
+import SettingContainer from "./components/settings/setting.container"
 import { withTranslation } from 'react-i18next';
 
 
 function App() {
   return (
     <>
-      <Settings/>
-      <Timer/>
+      <SettingContainer/>
+      <TimerContainer/>
     </>
   );
 }
