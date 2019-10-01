@@ -1,0 +1,15 @@
+{
+    "translation": {
+      "pomodoro": "Pomodoro",
+      "short_break": "Short break",
+      "long_break": "Long break",
+      "setting": "Setting",
+      "pause": "pause",
+      "reset": "reset",
+      "start": "start",
+      "skip": "skip",
+      "language": "Language",
+      "dark_theme": "Dark theme",
+      "timer_setting": "Timer setting"
+    }
+}

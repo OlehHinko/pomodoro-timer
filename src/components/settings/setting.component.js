@@ -16,19 +16,19 @@ const Setting = (props) => {
 
       return (
         <SettingsContainer>
-            <button className="btn-setting" onClick={() => props.handleShowModal()}>{t('Setting')}</button>
+            <button className="btn-setting" onClick={() => props.handleShowModal()}>{t('setting')}</button>
             { visible &&
                 <Modal>
                   <div className="header-modal">
-                    <h3>{t('Timer setting')}</h3>
+                    <h3>{t('timer_setting')}</h3>
                     <button onClick={() => props.handleHideModal()}>X</button>
                   </div>
                   <hr/>
                   <form onSubmit={props.handleSubmit}>
                     <div className="modal-content">
                       <div className="settings-timer">
-                        <div>
-                          <label>{t('Pomodoro')}</label>
+                        <div className="settings-timer-item">
+                          <label>{t('pomodoro')}</label>
                           <input 
                             type="number" 
                             name="pomodoro"
@@ -36,8 +36,8 @@ const Setting = (props) => {
                             onChange={props.handleChange} 
                             defaultValue={pomodoroDurations/60} />
                         </div>
-                        <div>
-                          <label>{t('Short break')}</label>
+                        <div className="settings-timer-item">
+                          <label>{t('short_break')}</label>
                           <input 
                             type="number" 
                             name="shortBreak" 
@@ -46,8 +46,8 @@ const Setting = (props) => {
                             onChange={props.handleChange} 
                             defaultValue={shortBreakDurations/60} />
                         </div>
-                        <div>
-                          <label>{t('Long break')}</label>
+                        <div className="settings-timer-item">
+                          <label>{t('long_break')}</label>
                           <input 
                             type="number" 
                             name="longBreak" 
@@ -59,16 +59,16 @@ const Setting = (props) => {
                       </div>
                       <hr/>
                       <div className="setting-language">
-                        <h4>{t('Language')}</h4>
+                        <h4>{t('language')}</h4>
                         <select name="language" onChange={props.handleChange}>
                           <option selected={language==="en"} defaultValue="en">en</option>
-                          <option selected={language==="uk"} defaultValue="uk">uk</option>
+                          <option selected={language==="ua"} defaultValue="uk">ua</option>
                           <option selected={language==="ru"} defaultValue="ru">ru</option>
                         </select>
                       </div> 
                       <hr/> 
                       <div className="settings-theme">
-                        <h4>{t('Darck theme')}</h4>  
+                        <h4>{t('dark_theme')}</h4>  
                         <div>
                           <input 
                             type="checkbox" 

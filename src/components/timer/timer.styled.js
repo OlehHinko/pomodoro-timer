@@ -25,6 +25,11 @@ export const TimeContainer = styled.div`
   text-align: center;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  > * {
+    width: 100%
+  }
   @media(max-width: 600px) {
     width: 90%;
     left: 5%;
@@ -35,8 +40,11 @@ export const Time = styled.div`
   color: white;
   font-size: 100px;
   font-weight: bold;
-  margin-top: 20px;
 `;
 
 export const ButtonContainer = styled.div`
+font-size: initial;
+button {
+    margin: 0 5px;
+  }
 `;

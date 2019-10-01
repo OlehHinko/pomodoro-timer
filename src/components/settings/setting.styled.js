@@ -4,10 +4,10 @@ import styled from 'styled-components';
 export const SettingsContainer = styled.div`
   margin: 0 auto;
   text-align: right;
-  padding: 20px 10px; 
+  padding: 20px 0; 
   position: fixed;
-  left: 35%;
-  width: 30%;
+  left: calc(50% - 250px);
+  width: 500px;
   z-index: 2;
   @media(max-width: 600px) {
     width: 90%;
@@ -66,15 +66,29 @@ export const Modal = styled.div`
       }
     }
   }
+  .settings-timer-item{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    input {
+      height: 20px;
+      width: 100%
+    }
+    label {
+      width: 100%;
+      text-align: center;
+    }
+  }
   .setting-language {
     display: flex;
     justify-content: space-between;
     > * {
       width: 50%;
-      select {
-        outline: none;
-        width: 100%;
-      }
+    }
+    select {
+      outline: none;
+      width: 50%;
+      margin: 0 auto;
     }
     h4 {
       line-height: 30px;

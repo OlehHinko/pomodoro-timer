@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import common_en from "./en";
 import common_ru from "./ru";
 import common_ua from "./ua";
 
@@ -7,21 +8,7 @@ import common_ua from "./ua";
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources: {
-      en: {
-        translation: {
-          "pomodoro": "Pomodoro",
-          "short_break": "Short break",
-          "long_break": "Long break",
-          "setting": "Setting",
-          "pause": "pause",
-          "reset": "reset",
-          "start": "start",
-          "skip": "skip",
-          "language": "Language",
-          "dark_theme": "Dark theme",
-          "timer_setting": "Timer setting",
-        }
-      },
+      en: common_en,
       ua: common_ua,
       ru: common_ru,
     },
@@ -33,7 +20,7 @@ import common_ua from "./ua";
     }
   });
 
-  export async function getTranslations() {
+export async function getTranslations() {
     try {
         const response = await fetch('https://api.myjson.com/bins/16058d', {
             method: 'GET',
@@ -52,31 +39,7 @@ import common_ua from "./ua";
 }
 
 export async function checkTranslation() {
-  if(!localStorage.getItem('timerTranslation')){
-    localStorage.setItem('en', {
-      resources: {
-        en: {
-          translation: {
-            "pomodoro": "Pomodoro",
-            "short_break": "Short break",
-            "long_break": "Long break",
-            "setting": "Setting",
-            "pause": "pause",
-            "reset": "reset",
-            "start": "start",
-            "skip": "skip",
-            "language": "Language",
-            "dark_theme": "Dark theme",
-            "timer_setting": "Timer setting",
-          }
-        }
-      },
-      lng: "en",
-      fallbackLng: "en",
-  
-      interpolation: {
-        escapeValue: false
-      }
-    })
+  if( localStorage.getItem('language')){
+    i18n.changeLanguage(localStorage.getItem('language'));
   }
 }
