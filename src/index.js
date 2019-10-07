@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
@@ -14,13 +14,16 @@ i18next.init({
 });
 
 ReactDOM.render((
-    <Provider store={getStore()}>
-        <Router>
-            <I18nextProvider i18n={i18next}>
-                <App />
-            </I18nextProvider>
-        </Router>
-</Provider>), document.getElementById('root'));
+        <Provider store={getStore()}>
+            <Router>
+                <Suspense fallback={<h2>Product list is loading...</h2>}>
+                    <I18nextProvider i18n={i18next}>
+                        <App />
+                    </I18nextProvider>
+                </Suspense>
+            </Router>
+        </Provider>
+    ), document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

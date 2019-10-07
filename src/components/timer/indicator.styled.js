@@ -14,7 +14,7 @@ left: calc(50% - 300px);
     height: 12px;
     border: 1px solid white;
     .indicator {
-        margin: 2px;
+        margin: 2px 0;
         height: 8px;
         background-color: gray;
     }

@@ -3,8 +3,7 @@ import {connect} from "react-redux";
 import Actions from "../../redux/actions";
 import ReactDOM from 'react-dom';
 import {withTranslation} from "react-i18next";
-import {Theme} from "../../api/constants"
-import {getTranslations} from "../translation/i18n"
+import {Theme} from "../../api/constants";
 import Setting from "./setting.component";
 
 class SettingContainer extends Component {
@@ -32,17 +31,16 @@ class SettingContainer extends Component {
     const { theme, title } = this.props;
 
     if(title !== prevProps.title && theme === "black"){
-      if(prevProps.title === "Pomodoro") {
+      if(prevProps.title === "pomodoro") {
         this.setState({prevTheme: Theme.pomodoro})
-      } else if( prevProps.title === "Short break") {
+      } else if( prevProps.title === "short_break") {
         this.setState({prevTheme: Theme.shoptBreak})
-      } else if( prevProps.title === "Long break") {
+      } else if( prevProps.title === "long_break") {
         this.setState({prevTheme: Theme.longBreak})
       }
       
     }
   }
-
 
   handleClickOutside(event) {
     const domNode = ReactDOM.findDOMNode(this);
@@ -88,9 +86,8 @@ class SettingContainer extends Component {
       setThemeTimer(this.state.prevTheme);
     } else if ( e.target.name === "language" ) {
       const { i18n } = this.props;
-      i18n.changeLanguage(e.target.value)
+      i18n.changeLanguage(e.target.value);
       setTimerLanguage(e.target.value);
-      getTranslations();
     } 
   }
 

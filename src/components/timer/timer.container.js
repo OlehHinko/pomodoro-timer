@@ -1,120 +1,128 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import Actions from "../../redux/actions";
-
 import {Theme} from "../../api/constants"
-import {checkTranslation, getTranslations} from "../translation/i18n"
 import Timer from "./timer.component";
+import {withTranslation} from "react-i18next";
 
 class TimerContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       timerStart: false,
+      seconds: localStorage.getItem('pomodoroDuration') || 1500,
+      indicatorWidth: 100,
+      counterSkip: 0,
     };
   }
 
   UNSAFE_componentWillMount() {
-    const {setDefaultSetting} = this.props;
+    const {setDefaultSetting, i18n} = this.props;
     setDefaultSetting();
-    checkTranslation();
-    getTranslations();
+    i18n.changeLanguage(localStorage.getItem("language"));
   }
 
-  UNSAFE_componentWillUpdate(prevProps) {
-    const {
-      seconds,
-      setCounterSkip,
-      title,
-      pomodoroDurations,
-      shortBreakDurations,
-      longBreakDurations,
-      setSeconds,
-     } = this.props;
-
-    if (seconds !== prevProps.seconds) {
-      this.handleIndicatorCalculationWidth(seconds, title);
-    }
+   componentDidUpdate = async (prevProps) => {
+    const { title, pomodoroDurations, longBreakDurations, shortBreakDurations } = this.props;
+    const { seconds }  = this.state;
 
     if(title !== prevProps.title) {
-      this.handleChangeThemeTimer(prevProps.title);
+      this.handleChangeThemeTimer(title);
     }
 
-    if (seconds === 1) {
+    if (seconds === 0) {
       clearInterval(this.interval);
-      setCounterSkip();
       this.handleCheckCounterSkip();
-      this.setState({timerStart: false});
+      this.setState({timerStart: false, indicatorWidth: 100});
     }
 
-   /* if(pomodoroDurations !== prevProps.pomodoroDurations) {
-      clearInterval(this.interval);
-      this.setState({timerStart: false});
-      setSeconds(prevProps.pomodoroDurations);
-    } else if(shortBreakDurations !== prevProps.shortBreakDurations) {
-      clearInterval(this.interval);
-      this.setState({timerStart: false});
-      setSeconds(prevProps.shortBreakDurations);
-    } if(longBreakDurations !== prevProps.longBreakDurations) {
-      clearInterval(this.interval);
-      this.setState({timerStart: false});
-      setSeconds(prevProps.longBreakDurations);
-    }*/
+    if (title === "pomodoro") {
+      if(pomodoroDurations !== prevProps.pomodoroDurations) {
+        const difference =  pomodoroDurations - prevProps.pomodoroDurations;
+        this.setState({seconds: seconds + difference })
+      } 
+    } else if(title === "long_break") {
+      if(longBreakDurations !== prevProps.longBreakDurations) {
+        const difference =  longBreakDurations - prevProps.longBreakDurations;
+        this.setState({seconds: seconds + difference })
+      }
+    } else if (title === "short_break") {
+      if(shortBreakDurations !== prevProps.shortBreakDurations) {
+        const difference =  shortBreakDurations - prevProps.shortBreakDurations;
+        this.setState({seconds: seconds + difference })
+      }
+    }
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
+  tick() {
+    const { title } = this.props;
+    const { seconds } = this.state;
+    this.handleIndicatorCalculationWidth(seconds, title);
+
+    this.setState(state => ({
+      seconds: state.seconds - 1, 
+    }));
+  }
+
   handleTimerStart = () => {
-    const {tick} = this.props;
-    this.interval = setInterval(() => tick(), 1000);
+    this.interval = setInterval(() => this.tick(), 1000);
     this.setState({timerStart: true});
   }
 
   handleTimerReset = () => {
     const {resetTimer, setPomodoroDurations} = this.props;
     clearInterval(this.interval);
-    this.setState({timerStart: false});
+    this.setState({timerStart: false, seconds: 1500});
     resetTimer();
-    localStorage.setItem('pomodoroDuration', 1500);
     setPomodoroDurations(1500);
+    localStorage.setItem('pomodoroDuration', 1500);
   }
 
   handleTimerPause = () => {
     clearInterval(this.interval);
   }
 
-  handleTimerSkip = () => {
-    const {setCounterSkip} = this.props;
-    setCounterSkip();
+  handleTimerSkip = async () => {
     this.handleCheckCounterSkip();
   }
 
-  handleCheckCounterSkip = () => {
+  handleCheckCounterSkip = async () => {
     const {
-      counterSkip,
-      setSeconds,
       pomodoroDurations,
       longBreakDurations,
       shortBreakDurations,
       setTimerTitle,
     } = this.props;
 
+    const {counterSkip} = this.state;
+
+    this.setState(() => ({
+      counterSkip: this.state.counterSkip + 1
+    }));
+
     if (counterSkip === 8 || counterSkip === 16 ) {
-      setSeconds(longBreakDurations);
+      this.setState({ seconds: longBreakDurations});
       setTimerTitle("long_break")
     } else if (counterSkip % 2 === 0) {
-      setSeconds(shortBreakDurations);
+      this.setState({ seconds: shortBreakDurations});
       setTimerTitle("short_break");
     } else {
-      setSeconds(pomodoroDurations);
+      this.setState({ seconds: pomodoroDurations});
       setTimerTitle("pomodoro")
     }
   }
 
   handleIndicatorCalculationWidth = (seconds, title) => {
-    const {setTimerIndicatorWidth, pomodoroDurations, longBreakDurations, shortBreakDurations,} = this.props;
+    const {
+      pomodoroDurations, 
+      longBreakDurations, 
+      shortBreakDurations,
+    } = this.props;
+
     let duration;
     if (title === "pomodoro") {
       duration = pomodoroDurations;
@@ -124,8 +132,8 @@ class TimerContainer extends Component {
       duration = shortBreakDurations;
     }
 
-    const width = (((seconds * 100) / duration) * 592) / 100;
-    setTimerIndicatorWidth(width)
+    const width = ((seconds * 100) / duration);
+    this.setState({indicatorWidth: width})
   }
 
   handleChangeThemeTimer = (title) => {
@@ -137,7 +145,6 @@ class TimerContainer extends Component {
     }
     let newTheme;
     if(title === "pomodoro") {
-      console.log(Theme.pomodoro);
       newTheme = Theme.pomodoro;
     } else if( title === "short_break") {
       newTheme = Theme.shoptBreak;
@@ -149,9 +156,9 @@ class TimerContainer extends Component {
   }
 
   render() {
-    const {seconds, title, theme} = this.props;
-    const { timerStart } = this.state;
-
+    const { title, theme } = this.props;
+    const { timerStart, seconds, indicatorWidth } = this.state;
+    console.log(this.props);
     return <Timer 
         seconds={seconds}
         title={title}
@@ -161,6 +168,7 @@ class TimerContainer extends Component {
         handleTimerReset={this.handleTimerReset}
         handleTimerPause={this.handleTimerPause}
         handleTimerSkip={this.handleTimerSkip}
+        indicatorWidth={indicatorWidth}
         />
   }
 }
@@ -168,7 +176,6 @@ class TimerContainer extends Component {
 export default connect(
   state => {
     return {
-      seconds: state.timer.seconds,
       title: state.timer.title,
       counterSkip: state.timer.counterSkip,
       pomodoroDurations: state.timerSetting.pomodoroDurations,
@@ -180,13 +187,10 @@ export default connect(
   },
   {
     setDefaultSetting: Actions.timer.setDefaultSetting,
-    tick: Actions.tick.tick,
-    setSeconds: Actions.timer.setSeconds,
     setCounterSkip: Actions.timer.setCounterSkip,
     resetTimer: Actions.timer.resetTimer,
     setTimerTitle: Actions.timer.setTimerTitle,
-    setTimerIndicatorWidth: Actions.timer.setTimerIndicatorWidth,
     setThemeTimer: Actions.timerSetting.setThemeTimer,
     setPomodoroDurations: Actions.timerSetting.setPomodoroDurations,
   }
-)(TimerContainer);
+)(withTranslation()(TimerContainer));

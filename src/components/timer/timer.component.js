@@ -5,11 +5,11 @@ import {withTranslation} from 'react-i18next';
 
 const Timer = (props) => { 
 
-  const {seconds, title, t, theme, timerStart} = props;
+  const {seconds, title, t, theme, timerStart, indicatorWidth} = props;
 
     return (
       <Card style={{backgroundColor: theme}}>
-        <Indicator />
+        <Indicator indicatorWidth={indicatorWidth}/>
         <TimeContainer>
           <Title>{t(title)}</Title>
           <Time>
