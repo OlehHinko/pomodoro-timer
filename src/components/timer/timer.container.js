@@ -3,7 +3,6 @@ import {connect} from "react-redux";
 import Actions from "../../redux/actions";
 import {Theme} from "../../api/constants"
 import Timer from "./timer.component";
-import {withTranslation} from "react-i18next";
 
 class TimerContainer extends Component {
   constructor(props) {
@@ -156,9 +155,9 @@ class TimerContainer extends Component {
   }
 
   render() {
-    const { title, theme } = this.props;
+    const { title, theme, t } = this.props;
     const { timerStart, seconds, indicatorWidth } = this.state;
-    console.log(this.props);
+    
     return <Timer 
         seconds={seconds}
         title={title}
@@ -169,6 +168,7 @@ class TimerContainer extends Component {
         handleTimerPause={this.handleTimerPause}
         handleTimerSkip={this.handleTimerSkip}
         indicatorWidth={indicatorWidth}
+        t={t}
         />
   }
 }
@@ -193,4 +193,4 @@ export default connect(
     setThemeTimer: Actions.timerSetting.setThemeTimer,
     setPomodoroDurations: Actions.timerSetting.setPomodoroDurations,
   }
-)(withTranslation()(TimerContainer));
+)(TimerContainer);

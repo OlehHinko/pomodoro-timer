@@ -5,14 +5,15 @@ import SettingContainer from "./components/settings/setting.container"
 import { withTranslation } from 'react-i18next';
 
 
-function App() {
+function App({t, i18n}) {
+  
   return (
     <>
-      <SettingContainer/>
-      <TimerContainer/>
+      <SettingContainer t={t} i18n={i18n} />
+      <TimerContainer t={t} i18n={i18n}/>
     </>
   );
 }
 
-export default withTranslation('common')(App);
+export default withTranslation()(App);
 

@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import Actions from "../../redux/actions";
 import ReactDOM from 'react-dom';
-import {withTranslation} from "react-i18next";
 import {Theme} from "../../api/constants";
 import Setting from "./setting.component";
 
@@ -24,6 +23,8 @@ class SettingContainer extends Component {
   }
 
   UNSAFE_componentWillMount() {
+    const {i18n} = this.props;
+    i18n.changeLanguage(localStorage.getItem("language"));
     document.addEventListener('click', this.handleClickOutside, false);
   }
 
@@ -71,6 +72,7 @@ class SettingContainer extends Component {
       setThemeTimer,
       setTimerLanguage,
       theme,
+      i18n,
     } = this.props;
     
     if(e.target.name === "pomodoro"){
@@ -85,7 +87,6 @@ class SettingContainer extends Component {
     } else if (!e.target.checked && e.target.name === "theme" ) {
       setThemeTimer(this.state.prevTheme);
     } else if ( e.target.name === "language" ) {
-      const { i18n } = this.props;
       i18n.changeLanguage(e.target.value);
       setTimerLanguage(e.target.value);
     } 
@@ -99,6 +100,7 @@ class SettingContainer extends Component {
         shortBreakDurations,
         theme,
         language,
+        t,
        } = this.props;
 
       return (
@@ -113,6 +115,7 @@ class SettingContainer extends Component {
           handleHideModal={this.handleHideModal}
           handleSubmit={this.handleSubmit}
           handleChange={this.handleChange}
+          t={t}
         />
       );
     }
@@ -136,4 +139,4 @@ class SettingContainer extends Component {
       setTimerLanguage: Actions.timerSetting.setTimerLanguage,
       setThemeTimer: Actions.timerSetting.setThemeTimer,
     }
-)(withTranslation()(SettingContainer));
+)(SettingContainer);

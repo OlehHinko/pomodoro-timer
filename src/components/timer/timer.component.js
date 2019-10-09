@@ -1,7 +1,6 @@
 import React from "react";
 import Indicator from "./indicator.component";
 import {ButtonContainer, Time, TimeContainer, Card, Title} from "./timer.styled"
-import {withTranslation} from 'react-i18next';
 
 const Timer = (props) => { 
 
@@ -26,5 +25,5 @@ const Timer = (props) => {
     );
 }
 
-export default withTranslation()(Timer);
+export default Timer;
 

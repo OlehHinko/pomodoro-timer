@@ -1,5 +1,4 @@
 import React from "react";
-import {withTranslation} from "react-i18next";
 import {SettingsContainer, Modal} from "./setting.styled";
 
 const Setting = (props) => {
@@ -91,4 +90,4 @@ const Setting = (props) => {
       );
   }
   
-  export default withTranslation()(Setting);
+  export default Setting;
