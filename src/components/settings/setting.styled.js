@@ -18,7 +18,7 @@ export const SettingsContainer = styled.div`
 export const Modal = styled.div`
   padding: 10px;
   width: 350px;
-  height: 350px;
+  height: 300px;
   position: fixed;
   top: 100px;
   left: calc(50% - 175px);
@@ -29,6 +29,9 @@ export const Modal = styled.div`
   @media(max-width: 600px) {
     width: 300px;
     left: calc(50% - 150px);
+  }
+  hr {
+    margin: 15px 0;
   }
   h4 {
     font-size: 17px;
@@ -140,14 +143,6 @@ export const Modal = styled.div`
       position: absolute;
       top: 2px;
       left: 6px;
-    }
-  }
-  .modal-footer {
-    height: 50px;
-    background-color: gray;
-    button {
-      margin: 10px;
-      float: right;
     }
   }
 `;

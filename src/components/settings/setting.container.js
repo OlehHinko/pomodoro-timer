@@ -92,6 +92,17 @@ class SettingContainer extends Component {
     } 
   }
 
+  checkDefaultValue = () => {
+    const {language} = this.props;
+    if(language === "en") {
+      return "en"
+    } else  if (language === "ua") {
+      return "ua"
+    } else if (language === "ru") {
+      return "ru"
+    } 
+  }
+
   render() {
       const {visible} = this.state;
       const {
@@ -99,7 +110,6 @@ class SettingContainer extends Component {
         longBreakDurations,
         shortBreakDurations,
         theme,
-        language,
         t,
        } = this.props;
 
@@ -110,12 +120,12 @@ class SettingContainer extends Component {
           longBreakDurations={longBreakDurations}
           shortBreakDurations={shortBreakDurations}
           theme={theme}
-          language={language}
           handleShowModal={this.handleShowModal}
           handleHideModal={this.handleHideModal}
           handleSubmit={this.handleSubmit}
           handleChange={this.handleChange}
           t={t}
+          checkDefaultValue={this.checkDefaultValue}
         />
       );
     }

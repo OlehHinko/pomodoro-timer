@@ -3,13 +3,13 @@
       "pomodoro": "Pomodoro",
       "short_break": "Short break",
       "long_break": "Long break",
-      "setting": "Setting",
+      "settings": "Settings",
       "pause": "pause",
       "reset": "reset",
       "start": "start",
       "skip": "skip",
       "language": "Language",
       "dark_theme": "Dark theme",
-      "timer_setting": "Timer setting"
+      "timer_settings": "Timer settings"
     }
 }

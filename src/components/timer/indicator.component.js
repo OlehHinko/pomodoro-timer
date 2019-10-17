@@ -7,6 +7,7 @@ export default function Indicator(props) {
             <div className="layout">
                 <div className="indicator" style={{ width: `${props.indicatorWidth}%` }}></div>
             </div>
+            <div className="work-session">{props.workSession}</div>
         </TimerIndicator>
       );
   }

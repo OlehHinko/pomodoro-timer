@@ -7,13 +7,13 @@ import { getStore } from "./store";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Provider } from "react-redux";
 import { I18nextProvider } from 'react-i18next';
-import i18next from './components/translation/i18n';
+import i18next from './translation/i18n';
 
 
 ReactDOM.render((
         <Provider store={getStore()}>
             <Router>
-                <Suspense fallback={<h2>Product list is loading...</h2>}>
+                <Suspense fallback={<h2>Timer is loading...</h2>}>
                     <I18nextProvider i18n={i18next}>
                         <App i18n={i18next}/>
                     </I18nextProvider>

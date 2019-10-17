@@ -4,11 +4,11 @@ import {ButtonContainer, Time, TimeContainer, Card, Title} from "./timer.styled"
 
 const Timer = (props) => { 
 
-  const {seconds, title, t, theme, timerStart, indicatorWidth} = props;
+  const {seconds, title, t, theme, timerStart, indicatorWidth, workSession} = props;
 
     return (
-      <Card style={{backgroundColor: theme}}>
-        <Indicator indicatorWidth={indicatorWidth}/>
+      <Card style={{backgroundColor: theme, transition: "all, 0.5s"}}>
+        <Indicator indicatorWidth={indicatorWidth} workSession={workSession}/>
         <TimeContainer>
           <Title>{t(title)}</Title>
           <Time>

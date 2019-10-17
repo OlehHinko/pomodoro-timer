@@ -12,6 +12,8 @@ class TimerContainer extends Component {
       seconds: localStorage.getItem('pomodoroDuration') || 1500,
       indicatorWidth: 100,
       counterSkip: 0,
+      unResetTimer: true,
+      workSession: "1/4",
     };
   }
 
@@ -21,9 +23,9 @@ class TimerContainer extends Component {
     i18n.changeLanguage(localStorage.getItem("language"));
   }
 
-   componentDidUpdate = async (prevProps) => {
+   componentDidUpdate = async (prevProps, prevState) => {
     const { title, pomodoroDurations, longBreakDurations, shortBreakDurations } = this.props;
-    const { seconds }  = this.state;
+    const { seconds, unResetTimer }  = this.state;
 
     if(title !== prevProps.title) {
       this.handleChangeThemeTimer(title);
@@ -35,22 +37,40 @@ class TimerContainer extends Component {
       this.setState({timerStart: false, indicatorWidth: 100});
     }
 
-    if (title === "pomodoro") {
-      if(pomodoroDurations !== prevProps.pomodoroDurations) {
-        const difference =  pomodoroDurations - prevProps.pomodoroDurations;
-        this.setState({seconds: seconds + difference })
-      } 
-    } else if(title === "long_break") {
-      if(longBreakDurations !== prevProps.longBreakDurations) {
-        const difference =  longBreakDurations - prevProps.longBreakDurations;
-        this.setState({seconds: seconds + difference })
-      }
-    } else if (title === "short_break") {
-      if(shortBreakDurations !== prevProps.shortBreakDurations) {
-        const difference =  shortBreakDurations - prevProps.shortBreakDurations;
-        this.setState({seconds: seconds + difference })
-      }
+    if (title === "pomodoro" && pomodoroDurations !== prevProps.pomodoroDurations && unResetTimer) {
+      debugger;
+        const difference =  pomodoroDurations - parseInt(prevProps.pomodoroDurations);
+        if(parseInt(seconds) + difference < 0 ){
+          this.handleCheckCounterSkip();
+          clearInterval(this.interval);
+          this.setState({timerStart: false});
+        } else {
+          this.setState({seconds: parseInt(seconds) + difference });
+        }
+    } else if(title === "long_break" && longBreakDurations !== prevProps.longBreakDurations && unResetTimer ) {
+        const difference =  longBreakDurations - parseInt(prevProps.longBreakDurations);
+        if(parseInt(seconds) + difference < 0 ){
+          this.handleCheckCounterSkip();
+          clearInterval(this.interval);
+          this.setState({timerStart: false});
+        } else {
+          this.setState({seconds: parseInt(seconds) + difference });
+        }
+    } else if (title === "short_break" && shortBreakDurations !== prevProps.shortBreakDurations && unResetTimer) {
+        const difference =  shortBreakDurations - parseInt(prevProps.shortBreakDurations);
+        if(parseInt(seconds) + difference < 0 ){
+          this.handleCheckCounterSkip();
+          clearInterval(this.interval);
+          this.setState({timerStart: false});
+        } else {
+          this.setState({seconds: parseInt(seconds) + difference });
+        }
     }
+
+    if(unResetTimer !== prevState.unResetTimer) {
+      this.setState({unResetTimer: true});
+    }
+
   }
 
   componentWillUnmount() {
@@ -74,8 +94,14 @@ class TimerContainer extends Component {
 
   handleTimerReset = () => {
     const {resetTimer, setPomodoroDurations} = this.props;
+    this.setState({
+      unResetTimer: false, 
+      workSession: "1/4", 
+      counterSkip: 0, 
+      timerStart: false, 
+      seconds: 1500
+    });
     clearInterval(this.interval);
-    this.setState({timerStart: false, seconds: 1500});
     resetTimer();
     setPomodoroDurations(1500);
     localStorage.setItem('pomodoroDuration', 1500);
@@ -99,11 +125,29 @@ class TimerContainer extends Component {
 
     const {counterSkip} = this.state;
 
-    this.setState(() => ({
-      counterSkip: this.state.counterSkip + 1
-    }));
 
-    if (counterSkip === 8 || counterSkip === 16 ) {
+    if(counterSkip === 7 || counterSkip === 17  || counterSkip === 27 || counterSkip === 37){
+      this.setState(() => ({
+        counterSkip: this.state.counterSkip + 2
+      }));
+    } else {
+      this.setState(() => ({
+        counterSkip: this.state.counterSkip + 1
+      }));
+    }
+    
+
+    if(counterSkip === 1 || counterSkip === 11 || counterSkip === 21 || counterSkip === 31 ) {
+      this.setState({workSession: "2/4"});
+    } else if ( counterSkip === 3 || counterSkip === 13 || counterSkip === 23 || counterSkip === 33 ) {
+      this.setState({workSession: "3/4"});
+    } else if ( counterSkip === 5 || counterSkip === 15 || counterSkip === 25 || counterSkip === 35 ) {
+      this.setState({workSession: "4/4"});
+    } else if(counterSkip === 9 || counterSkip === 19 || counterSkip === 29 || counterSkip === 39 ) {
+      this.setState({workSession: "1/4"});
+    } 
+
+    if (counterSkip === 7 || counterSkip === 17 || counterSkip === 27 || counterSkip === 37 ) {
       this.setState({ seconds: longBreakDurations});
       setTimerTitle("long_break")
     } else if (counterSkip % 2 === 0) {
@@ -156,8 +200,8 @@ class TimerContainer extends Component {
 
   render() {
     const { title, theme, t } = this.props;
-    const { timerStart, seconds, indicatorWidth } = this.state;
-    
+    const { timerStart, seconds, indicatorWidth, workSession } = this.state;
+
     return <Timer 
         seconds={seconds}
         title={title}
@@ -169,6 +213,7 @@ class TimerContainer extends Component {
         handleTimerSkip={this.handleTimerSkip}
         indicatorWidth={indicatorWidth}
         t={t}
+        workSession={workSession}
         />
   }
 }

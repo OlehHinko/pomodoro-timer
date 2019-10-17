@@ -19,4 +19,9 @@ left: calc(50% - 300px);
         background-color: gray;
     }
 }
+.work-session {
+        margin-top: 10px;
+        color: white;
+        font-size: 20px;
+    }
 `;

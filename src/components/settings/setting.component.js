@@ -10,16 +10,16 @@ const Setting = (props) => {
         theme,
         t,
         visible,
-        language,
+        checkDefaultValue
        } = props;
 
       return (
         <SettingsContainer>
-            <button className="btn-setting" onClick={() => props.handleShowModal()}>{t('setting')}</button>
+            <button className="btn-setting" onClick={() => props.handleShowModal()}>{t('settings')}</button>
             { visible &&
                 <Modal>
                   <div className="header-modal">
-                    <h3>{t('timer_setting')}</h3>
+                    <h3>{t('timer_settings')}</h3>
                     <button onClick={() => props.handleHideModal()}>X</button>
                   </div>
                   <hr/>
@@ -59,10 +59,10 @@ const Setting = (props) => {
                       <hr/>
                       <div className="setting-language">
                         <h4>{t('language')}</h4>
-                        <select name="language" onChange={props.handleChange}>
-                          <option selected={language==="en"} defaultValue="en">en</option>
-                          <option selected={language==="ua"} defaultValue="uk">ua</option>
-                          <option selected={language==="ru"} defaultValue="ru">ru</option>
+                        <select defaultValue={checkDefaultValue()} name="language" onChange={props.handleChange}>
+                          <option defaultValue="en">en</option>
+                          <option defaultValue="uk">ua</option>
+                          <option defaultValue="ru">ru</option>
                         </select>
                       </div> 
                       <hr/> 
@@ -79,9 +79,6 @@ const Setting = (props) => {
                         </div>
                       </div>
                       <hr/> 
-                    </div>
-                    <div className="modal-footer">
-                      <button type="submit">OK</button>
                     </div>
                   </form>
                 </Modal>
