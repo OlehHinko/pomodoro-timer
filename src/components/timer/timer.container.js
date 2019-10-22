@@ -1,170 +1,175 @@
-import React, {Component} from "react";
+import React, { useState, useEffect} from "react";
 import {connect} from "react-redux";
 import Actions from "../../redux/actions";
 import {Theme} from "../../api/constants"
 import Timer from "./timer.component";
+import {usePrevious} from "../../utils"
 
-class TimerContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      timerStart: false,
-      seconds: localStorage.getItem('pomodoroDuration') || 1500,
-      indicatorWidth: 100,
-      counterSkip: 0,
-      unResetTimer: true,
-      workSession: "1/4",
-    };
-  }
+const TimerContainer = (props) => {
+  const [timerStart, toggleTimerStart] = useState(false);
+  const [seconds, setSeconds] = useState(localStorage.getItem('pomodoroDuration') || 1500);
+  const [indicatorWidth, setIndicatorWidth] = useState(100);
+  const [counterSkip, setCounterSkip] = useState(0);
+  const [unResetTimer, setUnResetTimer] = useState(true);
+  const [workSession, setWorkSession] = useState("1/4");
+  const { theme, title, i18n, pomodoroDurations, longBreakDurations, shortBreakDurations  } = props;
 
-  UNSAFE_componentWillMount() {
-    const {setDefaultSetting, i18n} = this.props;
-    setDefaultSetting();
-    i18n.changeLanguage(localStorage.getItem("language"));
-  }
+  const prevTitle = usePrevious(title);
+  const prevPomodoroDurations = usePrevious(pomodoroDurations);
+  const prevLongBreakDurations = usePrevious(longBreakDurations);
+  const prevShortBreakDurations = usePrevious(shortBreakDurations);
+  const prevUnResetTimer = usePrevious(unResetTimer);
 
-   componentDidUpdate = async (prevProps, prevState) => {
-    const { title, pomodoroDurations, longBreakDurations, shortBreakDurations } = this.props;
-    const { seconds, unResetTimer }  = this.state;
+  useEffect(() => {
+    const {setDefaultSetting} = props;
+    let interval;
+   
+    if (timerStart) {
+     interval = setInterval(() => {
+        setSeconds(seconds => seconds - 1);
+        handleIndicatorCalculationWidth(seconds, title)
+      }, 1000);
+    } else if (!timerStart && seconds !== 0) {
+      clearInterval(interval);
+    }
 
-    if(title !== prevProps.title) {
-      this.handleChangeThemeTimer(title);
+    if(title !== prevTitle || title === prevTitle ) {
+      handleChangeThemeTimer(title);
     }
 
     if (seconds === 0) {
-      clearInterval(this.interval);
-      this.handleCheckCounterSkip();
-      this.setState({timerStart: false, indicatorWidth: 100});
+      handleCheckCounterSkip();
+      toggleTimerStart(false);
+      setIndicatorWidth(100);
     }
 
-    if (title === "pomodoro" && pomodoroDurations !== prevProps.pomodoroDurations && unResetTimer) {
-      debugger;
-        const difference =  pomodoroDurations - parseInt(prevProps.pomodoroDurations);
+    if (title === "pomodoro" && pomodoroDurations !== prevPomodoroDurations && unResetTimer) {
+        const difference =  pomodoroDurations - parseInt(prevPomodoroDurations);
         if(parseInt(seconds) + difference < 0 ){
-          this.handleCheckCounterSkip();
-          clearInterval(this.interval);
-          this.setState({timerStart: false});
+          handleCheckCounterSkip();
+          clearInterval(interval);
+          toggleTimerStart(false);
         } else {
-          this.setState({seconds: parseInt(seconds) + difference });
+          setSeconds(parseInt(seconds) + difference);
         }
-    } else if(title === "long_break" && longBreakDurations !== prevProps.longBreakDurations && unResetTimer ) {
-        const difference =  longBreakDurations - parseInt(prevProps.longBreakDurations);
+    } else if(title === "long_break" && longBreakDurations !== prevLongBreakDurations && unResetTimer ) {
+        const difference =  longBreakDurations - parseInt(prevLongBreakDurations);
         if(parseInt(seconds) + difference < 0 ){
-          this.handleCheckCounterSkip();
-          clearInterval(this.interval);
-          this.setState({timerStart: false});
+          handleCheckCounterSkip();
+          clearInterval(interval);
+          toggleTimerStart(false);;
         } else {
-          this.setState({seconds: parseInt(seconds) + difference });
+          setSeconds(parseInt(seconds) + difference );
         }
-    } else if (title === "short_break" && shortBreakDurations !== prevProps.shortBreakDurations && unResetTimer) {
-        const difference =  shortBreakDurations - parseInt(prevProps.shortBreakDurations);
+    } else if (title === "short_break" && shortBreakDurations !== prevShortBreakDurations && unResetTimer) {
+        const difference =  shortBreakDurations - parseInt(prevShortBreakDurations);
         if(parseInt(seconds) + difference < 0 ){
-          this.handleCheckCounterSkip();
-          clearInterval(this.interval);
-          this.setState({timerStart: false});
+          handleCheckCounterSkip();
+          clearInterval(interval);
+          toggleTimerStart(false);
         } else {
-          this.setState({seconds: parseInt(seconds) + difference });
+          setSeconds(parseInt(seconds) + difference );
         }
     }
 
-    if(unResetTimer !== prevState.unResetTimer) {
-      this.setState({unResetTimer: true});
+    if(unResetTimer !== prevUnResetTimer) {
+      setUnResetTimer(true);
     }
 
+    setDefaultSetting();
+    i18n.changeLanguage(localStorage.getItem("language"));
+   
+    return function cleanup() {
+      clearInterval(interval);
+    };
+
+  }, [
+    title,
+    timerStart, 
+    seconds, 
+    indicatorWidth, 
+    i18n, 
+    counterSkip, 
+    prevTitle, 
+    workSession,
+    unResetTimer,
+    pomodoroDurations,
+    longBreakDurations,
+    shortBreakDurations, 
+    prevPomodoroDurations,
+    prevLongBreakDurations,
+    prevShortBreakDurations,
+    prevUnResetTimer,
+    theme,
+   ]);
+
+  const handleTimerStart = () => {
+    toggleTimerStart(true);
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  tick() {
-    const { title } = this.props;
-    const { seconds } = this.state;
-    this.handleIndicatorCalculationWidth(seconds, title);
-
-    this.setState(state => ({
-      seconds: state.seconds - 1, 
-    }));
-  }
-
-  handleTimerStart = () => {
-    this.interval = setInterval(() => this.tick(), 1000);
-    this.setState({timerStart: true});
-  }
-
-  handleTimerReset = () => {
-    const {resetTimer, setPomodoroDurations} = this.props;
-    this.setState({
-      unResetTimer: false, 
-      workSession: "1/4", 
-      counterSkip: 0, 
-      timerStart: false, 
-      seconds: 1500
-    });
-    clearInterval(this.interval);
+  const handleTimerReset = () => {
+    const {resetTimer, setPomodoroDurations} = props;
+    toggleTimerStart(false);
+    setSeconds(1500);
+    setCounterSkip(0);
+    setUnResetTimer(false);
+    setWorkSession("1/4")
     resetTimer();
     setPomodoroDurations(1500);
     localStorage.setItem('pomodoroDuration', 1500);
   }
 
-  handleTimerPause = () => {
-    clearInterval(this.interval);
+  const handleTimerPause = () => {
+    toggleTimerStart(false);
   }
 
-  handleTimerSkip = async () => {
-    this.handleCheckCounterSkip();
+  const handleTimerSkip = async () => {
+    handleCheckCounterSkip();
   }
 
-  handleCheckCounterSkip = async () => {
+  const handleCheckCounterSkip = async () => {
     const {
       pomodoroDurations,
       longBreakDurations,
       shortBreakDurations,
       setTimerTitle,
-    } = this.props;
-
-    const {counterSkip} = this.state;
-
+    } = props;
 
     if(counterSkip === 7 || counterSkip === 17  || counterSkip === 27 || counterSkip === 37){
-      this.setState(() => ({
-        counterSkip: this.state.counterSkip + 2
-      }));
+      setCounterSkip(counterSkip + 2)
     } else {
-      this.setState(() => ({
-        counterSkip: this.state.counterSkip + 1
-      }));
+      setCounterSkip(counterSkip + 1);
     }
     
 
     if(counterSkip === 1 || counterSkip === 11 || counterSkip === 21 || counterSkip === 31 ) {
-      this.setState({workSession: "2/4"});
+      setWorkSession("2/4");
     } else if ( counterSkip === 3 || counterSkip === 13 || counterSkip === 23 || counterSkip === 33 ) {
-      this.setState({workSession: "3/4"});
+      setWorkSession("3/4");
     } else if ( counterSkip === 5 || counterSkip === 15 || counterSkip === 25 || counterSkip === 35 ) {
-      this.setState({workSession: "4/4"});
+      setWorkSession("4/4");
     } else if(counterSkip === 9 || counterSkip === 19 || counterSkip === 29 || counterSkip === 39 ) {
-      this.setState({workSession: "1/4"});
+      setWorkSession("1/4");
     } 
 
     if (counterSkip === 7 || counterSkip === 17 || counterSkip === 27 || counterSkip === 37 ) {
-      this.setState({ seconds: longBreakDurations});
+      setSeconds(longBreakDurations);
       setTimerTitle("long_break")
     } else if (counterSkip % 2 === 0) {
-      this.setState({ seconds: shortBreakDurations});
+      setSeconds(shortBreakDurations);
       setTimerTitle("short_break");
     } else {
-      this.setState({ seconds: pomodoroDurations});
+      setSeconds(pomodoroDurations);
       setTimerTitle("pomodoro")
     }
   }
 
-  handleIndicatorCalculationWidth = (seconds, title) => {
+  const handleIndicatorCalculationWidth = (seconds, title) => {
     const {
       pomodoroDurations, 
       longBreakDurations, 
       shortBreakDurations,
-    } = this.props;
+    } = props;
 
     let duration;
     if (title === "pomodoro") {
@@ -176,12 +181,12 @@ class TimerContainer extends Component {
     }
 
     const width = ((seconds * 100) / duration);
-    this.setState({indicatorWidth: width})
+    setIndicatorWidth(width);
   }
 
-  handleChangeThemeTimer = (title) => {
-    let {theme} = this.props;
-    const {setThemeTimer} = this.props;
+  const handleChangeThemeTimer = (title) => {
+    let {theme} = props;
+    const {setThemeTimer} = props;
 
     if(theme === "black") {
       return false;
@@ -190,7 +195,7 @@ class TimerContainer extends Component {
     if(title === "pomodoro") {
       newTheme = Theme.pomodoro;
     } else if( title === "short_break") {
-      newTheme = Theme.shoptBreak;
+      newTheme = Theme.shortBreak;
     } else if( title === "long_break") {
       newTheme = Theme.longBreak;
     }
@@ -198,41 +203,35 @@ class TimerContainer extends Component {
     setThemeTimer(newTheme);
   }
 
-  render() {
-    const { title, theme, t } = this.props;
-    const { timerStart, seconds, indicatorWidth, workSession } = this.state;
-
-    return <Timer 
+  const { t } = props;
+  console.log( seconds);
+  return <Timer 
         seconds={seconds}
         title={title}
         theme={theme}
         timerStart={timerStart}
-        handleTimerStart={this.handleTimerStart}
-        handleTimerReset={this.handleTimerReset}
-        handleTimerPause={this.handleTimerPause}
-        handleTimerSkip={this.handleTimerSkip}
+        handleTimerStart={handleTimerStart}
+        handleTimerReset={handleTimerReset}
+        handleTimerPause={handleTimerPause}
+        handleTimerSkip={handleTimerSkip}
         indicatorWidth={indicatorWidth}
         t={t}
         workSession={workSession}
         />
-  }
 }
 
 export default connect(
   state => {
     return {
       title: state.timer.title,
-      counterSkip: state.timer.counterSkip,
       pomodoroDurations: state.timerSetting.pomodoroDurations,
       shortBreakDurations: state.timerSetting.shortBreakDurations,
       longBreakDurations: state.timerSetting.longBreakDurations,
-      indicatorWidth: state.timer.indicatorWidth,
       theme: state.timerSetting.theme,
     };
   },
   {
     setDefaultSetting: Actions.timer.setDefaultSetting,
-    setCounterSkip: Actions.timer.setCounterSkip,
     resetTimer: Actions.timer.resetTimer,
     setTimerTitle: Actions.timer.setTimerTitle,
     setThemeTimer: Actions.timerSetting.setThemeTimer,

@@ -1,70 +1,42 @@
-import React, {Component} from "react";
+import React, { useState, useEffect } from "react";
 import {connect} from "react-redux";
 import Actions from "../../redux/actions";
-import ReactDOM from 'react-dom';
 import {Theme} from "../../api/constants";
 import Setting from "./setting.component";
+import {usePrevious} from "../../utils"
 
-class SettingContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: false,
-      prevTheme: "",
-    };
-    this.handleClickOutside = this.handleClickOutside.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+const SettingContainer = (props) =>  {
 
-  
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleClickOutside, false);
-  }
+  const [visible, setVisible] = useState(false);
+  const [prevTheme, setPrevTheme] = useState("");
+  const { theme, title, i18n } = props;
 
-  UNSAFE_componentWillMount() {
-    const {i18n} = this.props;
-    i18n.changeLanguage(localStorage.getItem("language"));
-    document.addEventListener('click', this.handleClickOutside, false);
-  }
+  const prevTitle = usePrevious(title);
 
-  UNSAFE_componentWillUpdate(prevProps) {
-    const { theme, title } = this.props;
-
-    if(title !== prevProps.title && theme === "black"){
-      if(prevProps.title === "pomodoro") {
-        this.setState({prevTheme: Theme.pomodoro})
-      } else if( prevProps.title === "short_break") {
-        this.setState({prevTheme: Theme.shoptBreak})
-      } else if( prevProps.title === "long_break") {
-        this.setState({prevTheme: Theme.longBreak})
+  useEffect(() => {
+    if((title === prevTitle || title !== prevTitle) && theme === "black"){
+      if(prevTitle === "pomodoro") {
+        setPrevTheme(Theme.pomodoro);
+      } else if( prevTitle === "short_break") {
+        setPrevTheme(Theme.shortBreak);
+      } else if( prevTitle === "long_break") {
+        setPrevTheme(Theme.longBreak);
       }
-      
     }
+
+    i18n.changeLanguage(localStorage.getItem("language"));
+   
+  }, [prevTitle, theme, title, i18n, visible]);
+
+  const handleShowModal = () => {
+    setVisible(true);
   }
 
-  handleClickOutside(event) {
-    const domNode = ReactDOM.findDOMNode(this);
-
-    if ((!domNode || !domNode.contains(event.target))) {
-      this.setState({visible: false});
-    }
+  const handleHideModal = () => {
+    setVisible(false);
   }
 
-  handleShowModal = () => {
-    this.setState({visible: true})
-  }
-
-  handleHideModal = () => {
-    this.setState({visible: false})
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.setState({visible: false})
-  }
-
-  handleChange = (e) => {
+  const handleChange = (e) => {
     const {
       setPomodoroDurations,
       setShortBreakDurations,
@@ -73,7 +45,7 @@ class SettingContainer extends Component {
       setTimerLanguage,
       theme,
       i18n,
-    } = this.props;
+    } = props;
     
     if(e.target.name === "pomodoro"){
       setPomodoroDurations(e.target.value * 60);
@@ -82,18 +54,18 @@ class SettingContainer extends Component {
     } else if (e.target.name === "longBreak") {
       setLongBreakDurations(e.target.value * 60);
     } else if (e.target.checked && e.target.name === "theme") {
-      this.setState({prevTheme: theme});
+      setPrevTheme(theme);
       setThemeTimer(Theme.themeDark);
     } else if (!e.target.checked && e.target.name === "theme" ) {
-      setThemeTimer(this.state.prevTheme);
+      setThemeTimer(prevTheme);
     } else if ( e.target.name === "language" ) {
       i18n.changeLanguage(e.target.value);
       setTimerLanguage(e.target.value);
     } 
   }
 
-  checkDefaultValue = () => {
-    const {language} = this.props;
+  const checkDefaultValue = () => {
+    const {language} = props;
     if(language === "en") {
       return "en"
     } else  if (language === "ua") {
@@ -103,32 +75,27 @@ class SettingContainer extends Component {
     } 
   }
 
-  render() {
-      const {visible} = this.state;
-      const {
-        pomodoroDurations,
-        longBreakDurations,
-        shortBreakDurations,
-        theme,
-        t,
-       } = this.props;
+  const {
+      pomodoroDurations,
+      longBreakDurations,
+      shortBreakDurations,
+       t,
+    } = props;
 
-      return (
+  return (
         <Setting 
           visible={visible}
           pomodoroDurations={pomodoroDurations}
           longBreakDurations={longBreakDurations}
           shortBreakDurations={shortBreakDurations}
           theme={theme}
-          handleShowModal={this.handleShowModal}
-          handleHideModal={this.handleHideModal}
-          handleSubmit={this.handleSubmit}
-          handleChange={this.handleChange}
+          handleShowModal={handleShowModal}
+          handleHideModal={handleHideModal}
+          handleChange={handleChange}
           t={t}
-          checkDefaultValue={this.checkDefaultValue}
+          checkDefaultValue={checkDefaultValue}
         />
       );
-    }
   }
   
   export default connect(
