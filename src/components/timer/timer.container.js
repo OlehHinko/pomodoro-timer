@@ -7,7 +7,7 @@ import {usePrevious} from "../../utils"
 
 const TimerContainer = (props) => {
   const [timerStart, toggleTimerStart] = useState(false);
-  const [seconds, setSeconds] = useState(localStorage.getItem('pomodoroDuration') || 1500);
+  const [seconds, setSeconds] = useState(parseInt(localStorage.getItem('pomodoroDuration')) || 1500);
   const [indicatorWidth, setIndicatorWidth] = useState(100);
   const [counterSkip, setCounterSkip] = useState(0);
   const [unResetTimer, setUnResetTimer] = useState(true);
@@ -23,11 +23,11 @@ const TimerContainer = (props) => {
   useEffect(() => {
     const {setDefaultSetting} = props;
     let interval;
-   
+
     if (timerStart) {
      interval = setInterval(() => {
-        setSeconds(seconds => seconds - 1);
-        handleIndicatorCalculationWidth(seconds, title)
+        setSeconds(seconds - 1);
+        handleIndicatorCalculationWidth(seconds, title);
       }, 1000);
     } else if (!timerStart && seconds !== 0) {
       clearInterval(interval);
@@ -43,32 +43,38 @@ const TimerContainer = (props) => {
       setIndicatorWidth(100);
     }
 
-    if (title === "pomodoro" && pomodoroDurations !== prevPomodoroDurations && unResetTimer) {
-        const difference =  pomodoroDurations - parseInt(prevPomodoroDurations);
-        if(parseInt(seconds) + difference < 0 ){
+    if (title === "pomodoro" && (pomodoroDurations !== (prevPomodoroDurations &&  prevPomodoroDurations !== undefined)) && unResetTimer) {
+        const difference =  parseInt(pomodoroDurations) - parseInt(prevPomodoroDurations);
+        if(seconds + difference < 0 ){
           handleCheckCounterSkip();
           clearInterval(interval);
           toggleTimerStart(false);
         } else {
-          setSeconds(parseInt(seconds) + difference);
+          if(!isNaN(difference)){
+            setSeconds(seconds + difference);
+          }
         }
-    } else if(title === "long_break" && longBreakDurations !== prevLongBreakDurations && unResetTimer ) {
-        const difference =  longBreakDurations - parseInt(prevLongBreakDurations);
+    } else if(title === "long_break" && (longBreakDurations !== (prevLongBreakDurations &&  prevLongBreakDurations !== undefined)) && unResetTimer ) {
+        const difference =  parseInt(longBreakDurations) - parseInt(prevLongBreakDurations);
         if(parseInt(seconds) + difference < 0 ){
           handleCheckCounterSkip();
           clearInterval(interval);
           toggleTimerStart(false);;
         } else {
-          setSeconds(parseInt(seconds) + difference );
+          if(!isNaN(difference)){
+            setSeconds(seconds + difference);
+          }
         }
-    } else if (title === "short_break" && shortBreakDurations !== prevShortBreakDurations && unResetTimer) {
+    } else if (title === "short_break" && (shortBreakDurations !== (prevShortBreakDurations&& prevShortBreakDurations!== undefined)) && unResetTimer) {
         const difference =  shortBreakDurations - parseInt(prevShortBreakDurations);
         if(parseInt(seconds) + difference < 0 ){
           handleCheckCounterSkip();
           clearInterval(interval);
           toggleTimerStart(false);
         } else {
-          setSeconds(parseInt(seconds) + difference );
+          if(!isNaN(difference)){
+            setSeconds(seconds + difference);
+          }
         }
     }
 
@@ -123,11 +129,11 @@ const TimerContainer = (props) => {
     toggleTimerStart(false);
   }
 
-  const handleTimerSkip = async () => {
+  const handleTimerSkip = () => {
     handleCheckCounterSkip();
   }
 
-  const handleCheckCounterSkip = async () => {
+  const handleCheckCounterSkip = () => {
     const {
       pomodoroDurations,
       longBreakDurations,
@@ -204,7 +210,6 @@ const TimerContainer = (props) => {
   }
 
   const { t } = props;
-  console.log( seconds);
   return <Timer 
         seconds={seconds}
         title={title}
